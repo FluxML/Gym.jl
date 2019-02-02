@@ -22,7 +22,8 @@ function Ctx(env::CartPoleEnv)
     o = Observable(s, "obs", obs(env.state))
     onimport(s, @js () -> begin
         window.pick = (e) -> document.querySelector(e)
-        window.board = @new Board(window.pick(".wio-scope"), $(config))
+        window.container = window.pick(".wio-scope") || window.pick(".webio-scope")
+        window.board = @new Board(window.container, $(config))
         board.render($o[])
     end)
 
