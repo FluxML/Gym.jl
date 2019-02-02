@@ -23,6 +23,8 @@ mutable struct CartPoleEnv
     steps_beyond_done
 end
 
+include("visualise.jl")
+
 function CartPoleEnv()
     gravity = 98f-1
     masscart = 1f0
