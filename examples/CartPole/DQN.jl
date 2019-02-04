@@ -1,37 +1,43 @@
-# This implementation of DQN on cartpole is to verify the cartpole.jl env
-using Flux
+using Flux, Gym
 using Flux.Optimise
 using Statistics: mean
 using DataStructures: CircularBuffer
 using Distributions: sample
-#Load game environment
+using Printf
+#using CuArrays
+
+# Load game environment
 env = CartPoleEnv()
+reset!(env)
 
 # ----------------------------- Parameters -------------------------------------
 
-STATE_SIZE = 4#length(env.state)
-ACTION_SIZE = 2#length(env.actions)
-MEM_SIZE = 100000
+STATE_SIZE = length(env.state)    # 4
+ACTION_SIZE = length(env.action_space) # 2
+MEM_SIZE = 100_000
 BATCH_SIZE = 64
-γ = 1.0f0   # discount rate
+γ = 1.0f0   			  # discount rate
 
 # Exploration params
-ϵ = 1.0f0   # Initial exploration rate
+ϵ = 1.0f0       # Initial exploration rate
 ϵ_MIN = 1f-2    # Final exploratin rate
 ϵ_DECAY = 995f-3
 
 # Optimiser params
 η = 1f-2   # Learning rate
+η_decay = 1f-2
 
-memory = CircularBuffer{Any}(MEM_SIZE) #used to remember past results
+memory = CircularBuffer{Any}(MEM_SIZE) # Used to remember past results
 
 # ------------------------------ Model Architecture ----------------------------
 
-model = Chain(Dense(STATE_SIZE, 24, tanh), Dense(24, 48, tanh), Dense(48, ACTION_SIZE)) |> gpu
+model = Chain(Dense(STATE_SIZE, 24, tanh),
+              Dense(24, 48, tanh),
+              Dense(48, ACTION_SIZE)) |> gpu
 
 loss(x, y) = Flux.mse(model(x), y)
 
-opt = Optimiser(ADAM(η), InvDecay(1f-2))
+opt = Optimiser(ADAM(η), InvDecay(η_decay))
 
 # ----------------------------- Helper Functions -------------------------------
 
@@ -100,7 +106,7 @@ while true
   push!(scores, total_reward)
   print("Episode: $e | Score: $total_reward ")
   last_100_mean = mean(scores)
-  print("Last 100 episodes mean score: $last_100_mean")
+  print("Last 100 episodes mean score: $(@sprintf "%6.2f" last_100_mean)")
   if last_100_mean > 195
     println("\nCartPole-v0 solved!")
     break
@@ -109,10 +115,13 @@ while true
   replay()
   e += 1
 end
+
 # -------------------------------- Testing -------------------------------------
+
 ee = 1
 
 while true
+  global ee
   reset!(env)
   total_reward = episode!(env, false)
   println("Episode: $ee | Score: $total_reward")

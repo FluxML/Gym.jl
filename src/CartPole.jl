@@ -1,6 +1,3 @@
-import Base.step
-import Base.show
-
 mutable struct CartPoleEnv
     gravity
     masscart

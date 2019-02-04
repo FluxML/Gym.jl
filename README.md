@@ -1,5 +1,5 @@
-# CartPole.jl
-CartPole environment in Julia
+# Gym.jl
+Gym environments in Julia
 
 
 ## Usage

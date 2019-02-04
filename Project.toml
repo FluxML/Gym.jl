@@ -1,6 +1,8 @@
-authors = ["Tejan Karmali <tejank10@gmail.com>"]
-name = "CartPole.jl"
+name = "Gym"
 uuid = "56b9baea-2481-11e9-37ae-75904354ad8c"
+authors = ["Tejan Karmali <tejank10@gmail.com>", "Neethu Mariya Joy <>"]
 version = "0.1.0"
 
 [deps]
+JSExpr = "97c1335a-c9c5-57fe-bc5d-ec35cebe8660"
+WebIO = "0f1e0344-ec1d-5b48-a673-e5cf874b6c29"
