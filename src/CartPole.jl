@@ -70,20 +70,18 @@ function step!(env::CartPoleEnv, action)
     xacc  = temp - env.polemass_length * θacc * cosθ / env.total_mass
     if env.kinematics_integrator == "euler"
         x  = x + env.τ * ẋ
-        ẋ = ẋ + env.τ * xacc
-        θ = θ + env.τ * θ̇
-        θ̇ = θ̇ + env.τ * θacc
+        ẋ  = ẋ + env.τ * xacc
+        θ  = θ + env.τ * θ̇
+        θ̇  = θ̇  + env.τ * θacc
     else # semi-implicit euler
         ẋ = ẋ + env.τ * xacc
         x = x + env.τ * ẋ
-        θ̇ = θ̇ + env.τ * thetaacc
+        θ̇ = θ̇ + env.τ * θacc
         θ = θ + env.τ * θ̇
     end
     env.state = [x, ẋ, θ, θ̇ ]
-    done =  x < -env.x_threshold ||
-            x > env.x_threshold ||
-            θ < -env.θ_threshold_radians ||
-            θ > env.θ_threshold_radians
+    done =  !((-env.x_threshold ≤ x ≤ env.x_threshold) &&
+      (-env.θ_threshold_radians ≤ θ ≤ env.θ_threshold_radians))
 
     if !done
         reward = 1f0
