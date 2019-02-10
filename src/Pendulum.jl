@@ -9,6 +9,8 @@ mutable struct PendulumEnv
     #observation_space
 end
 
+include("vis/pendulum.jl")
+
 function PendulumEnv()
     max_speed = 8f0
     max_torque = 2f0
