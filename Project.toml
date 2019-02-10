@@ -4,5 +4,6 @@ authors = ["Tejan Karmali <tejank10@gmail.com>", "Neethu Mariya Joy <>"]
 version = "0.1.0"
 
 [deps]
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 JSExpr = "97c1335a-c9c5-57fe-bc5d-ec35cebe8660"
 WebIO = "0f1e0344-ec1d-5b48-a673-e5cf874b6c29"

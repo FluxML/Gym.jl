@@ -31,7 +31,7 @@ function CartPoleEnv()
     polemass_length = (masspole * length)
     force_mag = 1f1
     τ = 2f-2  # seconds between state updates
-    kinematics_integrator = "euler"
+    kinematics_integrator = ""#"euler"
 
     # Angle at which to fail the episode
     θ_threshold_radians = Float32(12 * 2 * π / 360)
