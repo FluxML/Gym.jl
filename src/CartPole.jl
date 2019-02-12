@@ -20,8 +20,6 @@ mutable struct CartPoleEnv
     steps_beyond_done
 end
 
-include("visualise.jl")
-
 function CartPoleEnv()
     gravity = 98f-1
     masscart = 1f0
@@ -31,7 +29,7 @@ function CartPoleEnv()
     polemass_length = (masspole * length)
     force_mag = 1f1
     τ = 2f-2  # seconds between state updates
-    kinematics_integrator = ""#"euler"
+    kinematics_integrator = "euler"
 
     # Angle at which to fail the episode
     θ_threshold_radians = Float32(12 * 2 * π / 360)
@@ -58,30 +56,32 @@ function CartPoleEnv()
 end
 
 function step!(env::CartPoleEnv, action)
-    @assert action ∈ env.action_space "$action in ($(env.action_space)) invalid"
+#    @assert action ∈ env.action_space "$action in ($(env.action_space)) invalid"
     state = env.state
-    x, ẋ, θ, θ̇  = state
-    force = action == 2 ? env.force_mag : -env.force_mag
-    cosθ = cos(θ)
-    sinθ = sin(θ)
-    temp = (force + env.polemass_length * θ̇  ^ 2 * sinθ) / env.total_mass
-    θacc = (env.gravity*sinθ - cosθ*temp) /
-           (env.length * (4f0/3 - env.masspole * cosθ ^ 2 / env.total_mass))
-    xacc  = temp - env.polemass_length * θacc * cosθ / env.total_mass
+    x, ẋ, θ, θ̇  = state[1:1], state[2:2], state[3:3], state[4:4]
+    #force = action == 2 ? env.force_mag : -env.force_mag
+    force = action .* env.force_mag  # action is +1 or -1
+    cosθ = cos.(θ)
+    sinθ = sin.(θ)
+    temp = (force .+ env.polemass_length * θ̇  .^ 2 .* sinθ) / env.total_mass
+    θacc = (env.gravity*sinθ .- cosθ.*temp) ./
+           (env.length * (4f0/3 .- env.masspole * cosθ .^ 2 / env.total_mass))
+    xacc  = temp .- env.polemass_length * θacc .* cosθ / env.total_mass
     if env.kinematics_integrator == "euler"
-        x  = x + env.τ * ẋ
-        ẋ  = ẋ + env.τ * xacc
-        θ  = θ + env.τ * θ̇
-        θ̇  = θ̇  + env.τ * θacc
+        x_ = x  .+ env.τ * ẋ
+        ẋ_ = ẋ  .+ env.τ * xacc
+        θ_ = θ  .+ env.τ * θ̇
+        θ̇_ = θ̇  .+ env.τ * θacc
     else # semi-implicit euler
-        ẋ = ẋ + env.τ * xacc
-        x = x + env.τ * ẋ
-        θ̇ = θ̇ + env.τ * θacc
-        θ = θ + env.τ * θ̇
+        ẋ_ = ẋ  .+ env.τ * xacc
+        x_ = x  .+ env.τ * ẋ_
+        θ̇_ = θ̇  .+ env.τ * θacc
+        θ_ = θ  .+ env.τ * θ̇_
     end
-    env.state = [x, ẋ, θ, θ̇ ]
-    done =  !((-env.x_threshold ≤ x ≤ env.x_threshold) &&
-      (-env.θ_threshold_radians ≤ θ ≤ env.θ_threshold_radians))
+
+    env.state = vcat(x_, ẋ_, θ_, θ̇_)
+    done =  !(all(vcat(-env.x_threshold .≤ x_ .≤ env.x_threshold,
+            -env.θ_threshold_radians .≤ θ_ .≤ env.θ_threshold_radians)))
 
     if !done
         reward = 1f0
@@ -91,18 +91,21 @@ function step!(env::CartPoleEnv, action)
         reward = 1f0
     else
         if env.steps_beyond_done == 0
-            @warn "You are calling 'step()' even though this environment has already returned done = true. You should always call 'reset()' once you receive 'done = true' -- any further steps are undefined behavior."
+            @warn "You are calling 'step!()' even though this environment has already returned done = true. You should always call 'reset()' once you receive 'done = true' -- any further steps are undefined behavior."
         end
         env.steps_beyond_done += 1
         reward = 0f0
     end
+
     return env.state, reward, done, Dict()
 end
 
 function reset!(env::CartPoleEnv)
-    env.state = rand(Float32, 4) * 1f-1 .- 5f-2
+    env.state = param(rand(Float32, 4) * 1f-1 .- 5f-2)
     env.steps_beyond_done = nothing
     return env.state
 end
 
 show(io::IO, env::CartPoleEnv) = print(io, "CartPoleEnv")
+
+
