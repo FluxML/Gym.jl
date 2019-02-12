@@ -1,7 +1,9 @@
 module Gym
 
+using Flux
+using Flux.Tracker
+using CuArrays
 
-using Flux, Flux.Tracker
 import Base.show
 
 export step!, reset!, Ctx, render
