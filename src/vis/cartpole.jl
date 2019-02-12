@@ -1,17 +1,10 @@
-using WebIO, JSExpr
-
-struct Ctx
-    s::Scope
-    o::Observable
-end
-
-obs(::Nothing) = obs(zeros(4))
-obs((x, x̄, θ, θ̄)) =
+obs(env::CartPoleEnv, ::Nothing) = obs(env, zeros(4))
+obs(env::CartPoleEnv, (x, x̄, θ, θ̄)) =
     Dict("x" => x, "theta"=>θ)
 
 function Ctx(env::CartPoleEnv)
     path = (p) -> normpath("$(@__DIR__)/$p")
-    s = Scope(imports=path.(["../assets/js/Board.js", "../assets/css/cartpole.css"]))
+    s = Scope(imports=path.(["../../assets/cartpole/js/Board.js", "../../assets/cartpole/css/cartpole.css"]))
     config = Dict(
         "cart_height"=> env.length/60,
         "cart_length"=> 2*env.length,
@@ -19,7 +12,7 @@ function Ctx(env::CartPoleEnv)
         "pole_diameter"=> env.polemass_length/5,
         "x_threshold"=> env.x_threshold)
 
-    o = Observable(s, "obs", obs(env.state))
+    o = Observable(s, "obs", obs(env, env.state))
     onimport(s, @js () -> begin
         window.pick = (e) -> document.querySelector(e)
         window.container = window.pick(".wio-scope") || window.pick(".webio-scope")
@@ -35,5 +28,5 @@ function Ctx(env::CartPoleEnv)
 end
 
 function render(env::CartPoleEnv, ctx::Ctx)
-    ctx.o[] = obs(env.state)
+    ctx.o[] = obs(env, env.state)
 end

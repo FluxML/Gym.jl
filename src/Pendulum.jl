@@ -9,6 +9,8 @@ mutable struct PendulumEnv
     #observation_space
 end
 
+include("vis/pendulum.jl")
+
 function PendulumEnv()
     max_speed = 8f0
     max_torque = 2f0
@@ -39,7 +41,7 @@ end
 
 function reset!(env::PendulumEnv)
     high = Float32.([π, 1])
-    env.state = param(2rand(Float32, 2) .* high .- high)
+    env.state = param(2rand(Float32, 2) .* high .- high) |> gpu
     env.last_u = nothing
     return _get_obs(env)
 end
