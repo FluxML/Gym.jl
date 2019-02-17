@@ -1,6 +1,14 @@
 # Gym.jl
 Gym environments in Julia
 
+# Installation
+```julia
+julia> ] add https://github.com/tejank10/Gym.jl
+```
+To use Gym.jl on GPU, run
+```julia
+julia> ] add https://github.com/tejank10/Gym.jl#GPU
+```
 
 ## Usage
 
