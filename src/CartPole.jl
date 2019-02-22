@@ -104,7 +104,13 @@ end
 
 function reset!(env::CartPoleEnv)
     env.state = param(rand(Float32, 4) * 1f-1 .- 5f-2)
+    
+    if isdefined(Main, :CuArrays)
+        env.state = env.state |> gpu
+    end
+    
     env.steps_beyond_done = nothing
+    
     return env.state
 end
 

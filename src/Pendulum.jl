@@ -42,6 +42,11 @@ end
 function reset!(env::PendulumEnv)
     high = Float32.([π, 1])
     env.state = param(2rand(Float32, 2) .* high .- high)
+    
+    if isdefined(Main, :CuArrays)
+        env.state = env.state |> gpu
+    end
+    
     env.last_u = nothing
     return _get_obs(env)
 end
