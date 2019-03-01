@@ -12,7 +12,7 @@ function Ctx(env::CartPoleEnv)
         "pole_diameter"=> env.polemass_length/5,
         "x_threshold"=> env.x_threshold)
 
-    o = Observable(s, "obs", obs(env, env.state))
+    o = Observable(s, "obs", obs(env, Flux.data(env.state)))
     onimport(s, @js () -> begin
         window.pick = (e) -> document.querySelector(e)
         window.container = window.pick(".wio-scope") || window.pick(".webio-scope")
@@ -28,5 +28,5 @@ function Ctx(env::CartPoleEnv)
 end
 
 function render(env::CartPoleEnv, ctx::Ctx)
-    ctx.o[] = obs(env, env.state)
+    ctx.o[] = obs(env, Flux.data(env.state))
 end

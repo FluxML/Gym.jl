@@ -7,14 +7,20 @@ struct Ctx <: AbstractCtx
     o::Observable
 end
 
-
-function play(env, actions=rand(1:2, 1000), w=nothing)
+# `play(env, actions)`
+# or
+# `
+# using Blink
+# w = Blink()
+# play(env, actions, (ctx)=> body!(w, ctx.s))
+# `
+function play(env, actions=rand(1:2, 1000), cb=nothing)
     reset!(env)
     ctx = Ctx(env)
-    if w == nothing
+    if cb == nothing
         display(ctx.s)
     else
-        body!(w, ctx.s)
+        cb(ctx)
     end
 
     i = 1

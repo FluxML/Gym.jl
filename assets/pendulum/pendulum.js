@@ -9,7 +9,7 @@ function Pendulum(canvas){
 
 Pendulum.prototype.set_theta = function(t){
 	console.log(t)
-	this.theta = t;
+	this.theta = t + Math.PI;
 }
 
 Pendulum.prototype.draw = function(){
