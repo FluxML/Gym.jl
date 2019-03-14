@@ -3,7 +3,7 @@ Gym environments in Julia
 
 # Installation
 ```julia
-julia> ] add https://github.com/tejank10/Gym.jl
+julia> ] add https://github.com/FluxML/Gym.jl
 ```
 
 ## Usage
