@@ -3,7 +3,7 @@
 {0,1,...,n-1}
 
 Example usage:
-self.observation_space = Discrete(2)
+discrete_obj.observation_space = Discrete(2)
 """
 mutable struct Discrete <: AbstractSpace
     n::Int
@@ -12,18 +12,18 @@ mutable struct Discrete <: AbstractSpace
     Discrete(N::Int) = new(N, Int64)
 end
 
-sample(self::Discrete) = rand(1:self.n)
+sample(discrete_obj::Discrete) = rand(1:discrete_obj.n)
 
-function contains(self::Discrete, x::Union{Number, Array})
+function contains(discrete_obj::Discrete, x::Union{Number, Array})
     as_int::Union{Number, Array, Nothing} = nothing
     try
         as_int = Int.(x)
     catch InexactError
         return false
     end
-    return all(1 .<= as_int .<= self.n)
+    return all(1 .<= as_int .<= discrete_obj.n)
 end
 
-Base.:(==)(self::Discrete, other::Discrete) = self.n == other.n
+Base.:(==)(discrete_obj::Discrete, other::Discrete) = discrete_obj.n == other.n
 
-Base.length(self::Discrete) = self.n
+Base.length(discrete_obj::Discrete) = discrete_obj.n

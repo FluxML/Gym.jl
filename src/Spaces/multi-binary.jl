@@ -8,8 +8,8 @@ mutable struct MultiBinary <: AbstractSpace
     MultiBinary(n::Int) = new(n, BitArray{1}, (n, ))
 end
 
-sample(self::MultiBinary) = (self.dtype)(rand(0:1, self.n))
+sample(multibin_obj::MultiBinary) = (multibin_obj.dtype)(rand(0:1, multibin_obj.n))
 
-contains(self::MultiBinary, x) = all((x .== 0) .| (x .== 1))
+contains(multibin_obj::MultiBinary, x) = all((x .== 0) .| (x .== 1))
 
-Base.:(==)(self::MultiBinary, other::MultiBinary) = self.n == other.n
+Base.:(==)(multibin_obj::MultiBinary, other::MultiBinary) = multibin_obj.n == other.n

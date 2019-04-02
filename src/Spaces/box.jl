@@ -8,7 +8,7 @@ A box in R^n.
 I.e., each coordinate is bounded.
 
 Example usage:
-self.action_space = Box(-10, 10, (1,))
+box_obj.action_space = Box(-10, 10, (1,))
 
 Two kinds of valid input:
     Box(low=-1.0, high=1.0, shape=(3,4)) # low and high are scalars, and shape is provided
@@ -53,16 +53,16 @@ function Box(low::Array, high::Array, dtype::Union{DataType, Nothing}=nothing)
     return Box(low, high, shape, dtype)
 end
 #=
-function seed!(self::Box, seed::Int)
-    self.seed = seed
+function seed!(box_obj::Box, seed::Int)
+    box_obj.seed = seed
 end
 =#
-function sample(self::Box)
-    self.dtype <: AbstractFloat ?
-        rand(self.dtype, self.shape) .* (self.high .- self.low) .+ self.low :
-        rand.(UnitRange.(self.low, self.high))
+function sample(box_obj::Box)
+    box_obj.dtype <: AbstractFloat ?
+        rand(box_obj.dtype, box_obj.shape) .* (box_obj.high .- box_obj.low) .+ box_obj.low :
+        rand.(UnitRange.(box_obj.low, box_obj.high))
 end
 
-contains(self::Box, x) = size(x) == self.shape && all(x .>= self.low) && all(x .<= self.high)
+contains(box_obj::Box, x) = size(x) == box_obj.shape && all(x .>= box_obj.low) && all(x .<= box_obj.high)
 
-Base.:(==)(self::Box, other::Box) = isapprox(self.low, other.low) && isapprox(self.high, other.high)
+Base.:(==)(box_obj::Box, other::Box) = isapprox(box_obj.low, other.low) && isapprox(box_obj.high, other.high)
