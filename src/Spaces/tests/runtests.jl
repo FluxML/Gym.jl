@@ -1,4 +1,6 @@
 #TODO: Write more tests
+
+#To run tests, load the Space module first (/src/Spaces/Space.jl)
 using Test
 
 abstract type AbstractSpace end
