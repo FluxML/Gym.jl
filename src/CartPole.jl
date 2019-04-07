@@ -1,19 +1,19 @@
 mutable struct CartPoleEnv
-    gravity
-    masscart
-    masspole
-    total_mass
-    length  # actually half the pole's length
-    polemass_length
-    force_mag
-    τ   # seconds between state updates
-    kinematics_integrator
+    gravity::Float32
+    masscart::Float32
+    masspole::Float32
+    total_mass::Float32
+    length::Float32  # actually half the pole's length
+    polemass_length::Float32
+    force_mag::Float32
+    τ::Float32   # seconds between state updates
+    kinematics_integrator::AbstractString
 
     # Angle at which to fail the episode
-    θ_threshold_radians
-    x_threshold
-    action_space
-    observation_space
+    θ_threshold_radians::Float32
+    x_threshold::Float32
+    action_space::Discrete
+    observation_space::Box
     viewer
     state
 
@@ -44,8 +44,8 @@ function CartPoleEnv()
         2θ_threshold_radians,
         maxintfloat(Float32)]
 
-    action_space = 1:2
-    observation_space = (-high, high)
+    action_space = Discrete(2)
+    observation_space = Box(-high, high, Float32)
 
     viewer = nothing
     state = nothing
@@ -58,7 +58,7 @@ function CartPoleEnv()
 end
 
 function step!(env::CartPoleEnv, action)
-#    @assert action ∈ env.action_space "$action in ($(env.action_space)) invalid"
+    @assert action ∈ env.action_space "$action in ($(env.action_space)) invalid"
     state = env.state
     x, ẋ, θ, θ̇  = state[1:1], state[2:2], state[3:3], state[4:4]
     #force = action == 2 ? env.force_mag : -env.force_mag
@@ -104,16 +104,14 @@ end
 
 function reset!(env::CartPoleEnv)
     env.state = param(rand(Float32, 4) * 1f-1 .- 5f-2)
-    
+
     if isdefined(Main, :CuArrays)
         env.state = env.state |> gpu
     end
-    
+
     env.steps_beyond_done = nothing
-    
+
     return env.state
 end
 
 show(io::IO, env::CartPoleEnv) = print(io, "CartPoleEnv")
-
-
