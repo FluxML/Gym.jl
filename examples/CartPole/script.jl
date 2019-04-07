@@ -1,5 +1,5 @@
 using .Gym
-env = CartPoleEnv1()
+env = CartPoleEnv()
 ctx = Ctx(env)
 
 display(ctx.s)
