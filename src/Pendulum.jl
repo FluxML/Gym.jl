@@ -1,12 +1,12 @@
 mutable struct PendulumEnv
-    max_speed
-    max_torque
+    max_speed::Float32
+    max_torque::Float32
     last_u
-    dt
+    dt::Float32
     viewer
     state
-    #action_space
-    #observation_space
+    action_space::Box
+    observation_space::Box
 end
 
 include("vis/pendulum.jl")
@@ -18,11 +18,14 @@ function PendulumEnv()
     viewer = nothing
     # Observation space limits
     high = [1f0, 1f0, max_speed]
+    action_space = Box(-max_torque, max_torque, (1,), Float32)
+    observation_space = Box(-high, high, Float32)
 
-    PendulumEnv(max_speed, max_torque, nothing, dt, nothing, nothing)
+    PendulumEnv(max_speed, max_torque, nothing, dt, nothing, nothing, action_space, observation_space)
 end
 
 function step!(env::PendulumEnv, u)
+    @assert u ∈ env.action_space "Invalid action ($(u)) issued"
     θ, θ̇  = env.state[1:1], env.state[2:2]
     g, m, l, dt = 10f0, 1f0, 1f0, env.dt
 
@@ -42,11 +45,11 @@ end
 function reset!(env::PendulumEnv)
     high = Float32.([π, 1])
     env.state = param(2rand(Float32, 2) .* high .- high)
-    
+
     if isdefined(Main, :CuArrays)
         env.state = env.state |> gpu
     end
-    
+
     env.last_u = nothing
     return _get_obs(env)
 end
