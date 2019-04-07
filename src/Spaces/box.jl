@@ -65,7 +65,7 @@ end
 
 function contains(box_obj::Box, x)
     isa(x, Number) && box_obj.shape == (1,) && (x = [x])
-    size(x) == box_obj.shape && all(x .>= box_obj.low) && all(x .<= box_obj.high)
+    size(x) == box_obj.shape && all(box_obj.low .<= x .<= box_obj.high)
 end
 
 Base.:(==)(box_obj::Box, other::Box) = isapprox(box_obj.low, other.low) && isapprox(box_obj.high, other.high)
