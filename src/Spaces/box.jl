@@ -1,6 +1,3 @@
-import Random
-
-
 # TODO: seed, copy
 
 """
