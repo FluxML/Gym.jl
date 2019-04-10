@@ -9,7 +9,7 @@ mutable struct PendulumEnv
     observation_space::Box
 end
 
-include("vis/pendulum.jl")
+include("../vis/classic_control/pendulum.jl")
 
 function PendulumEnv()
     max_speed = 8f0

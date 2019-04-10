@@ -20,7 +20,7 @@ mutable struct CartPoleEnv
     steps_beyond_done
 end
 
-include("vis/cartpole.jl")
+include("../vis/classic_control/cartpole.jl")
 
 function CartPoleEnv()
     gravity = 98f-1
