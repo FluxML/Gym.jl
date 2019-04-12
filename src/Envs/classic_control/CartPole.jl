@@ -1,4 +1,4 @@
-mutable struct CartPoleEnv
+mutable struct CartPoleEnv <: AbstractEnv
     gravity::Float32
     masscart::Float32
     masspole::Float32
@@ -58,7 +58,7 @@ function CartPoleEnv()
 end
 
 function step!(env::CartPoleEnv, action)
-    @assert action ∈ env.action_space "$action in ($(env.action_space)) invalid"
+#    @assert action ∈ env.action_space "$action in ($(env.action_space)) invalid"
     state = env.state
     x, ẋ, θ, θ̇  = state[1:1], state[2:2], state[3:3], state[4:4]
     #force = action == 2 ? env.force_mag : -env.force_mag

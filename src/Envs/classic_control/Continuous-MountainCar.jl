@@ -1,4 +1,4 @@
-mutable struct Continuous_MountainCarEnv
+mutable struct Continuous_MountainCarEnv <: AbstractEnv
     min_action::Float32
     max_action::Float32
     min_position::Float32
