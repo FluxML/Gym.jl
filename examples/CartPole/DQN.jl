@@ -1,4 +1,4 @@
-using Flux, .Gym
+using Flux, Gym
 using Flux.Optimise: Optimiser
 using Flux.Tracker: data
 using Statistics: mean
