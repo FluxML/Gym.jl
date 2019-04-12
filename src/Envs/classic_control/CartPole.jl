@@ -20,7 +20,7 @@ mutable struct CartPoleEnv
     steps_beyond_done
 end
 
-include("../vis/classic_control/cartpole.jl")
+include("vis/cartpole.jl")
 
 function CartPoleEnv()
     gravity = 98f-1
@@ -114,4 +114,4 @@ function reset!(env::CartPoleEnv)
     return env.state
 end
 
-show(io::IO, env::CartPoleEnv) = print(io, "CartPoleEnv")
+Base.show(io::IO, env::CartPoleEnv) = print(io, "CartPoleEnv")

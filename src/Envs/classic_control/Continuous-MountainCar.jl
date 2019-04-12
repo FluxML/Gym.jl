@@ -55,4 +55,4 @@ function reset!(env::Continuous_MountainCarEnv)
     env.state = param([2f-1rand(Float32) - 6f-1, 0f0])
 end
 
-show(io::IO, env::Continuous_MountainCarEnv) = print(io, "Continuous-MountainCarEnv")
+Base.show(io::IO, env::Continuous_MountainCarEnv) = print(io, "Continuous-MountainCarEnv")
