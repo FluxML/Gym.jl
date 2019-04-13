@@ -8,12 +8,4 @@ Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 JSExpr = "97c1335a-c9c5-57fe-bc5d-ec35cebe8660"
 WebIO = "0f1e0344-ec1d-5b48-a673-e5cf874b6c29"
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-<<<<<<< HEAD
-<<<<<<< HEAD
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
-=======
->>>>>>> upstream/master
-=======
-Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
-
->>>>>>> 57732161f79e628fc9df43d8e7bac971f789f790
