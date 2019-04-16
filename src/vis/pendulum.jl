@@ -20,6 +20,6 @@ function Ctx(env::PendulumEnv)
     Ctx(s, o)
 end
 
-function render(env::PendulumEnv, ctx::Ctx)
+function render(env::PendulumEnv, ctx::WebIOCtx)
     ctx.o[] = obs(env, env.state)
 end
