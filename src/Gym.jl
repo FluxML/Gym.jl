@@ -5,7 +5,7 @@ using Flux.Tracker
 
 import Base.show
 
-export step!, reset!, Ctx, render
+export step!, reset!, Ctx, render, render!
 
 #Spaces
 include("Spaces/Space.jl")
