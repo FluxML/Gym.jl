@@ -17,7 +17,7 @@ struct CairoCtx <: AbstractCtx
     pole_length::Float32
     cart_width::Float32
     cart_height::Float32
-    viewer::Cario.CairoSurfaceBase{UInt32}
+    viewer::Cairo.CairoSurfaceBase{UInt32}
 end
 
 # `play(env, actions)`
