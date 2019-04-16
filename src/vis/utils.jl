@@ -1,10 +1,23 @@
-using WebIO, JSExpr
+using WebIO, JSExpr, Cairo
 
 abstract type AbstractCtx end
 
-struct Ctx <: AbstractCtx
+struct WebIOCtx <: AbstractCtx
     s::Scope
     o::Observable
+end
+
+struct CairoCtx <: AbstractCtx
+    screen_height::UInt32
+    screen_width::UInt32
+    world_width::Float32
+    scale::Float32
+    carty::UInt32
+    pole_width::Float32
+    pole_length::Float32
+    cart_width::Float32
+    cart_height::Float32
+    viewer::Cario.CairoSurfaceBase{UInt32}
 end
 
 # `play(env, actions)`
