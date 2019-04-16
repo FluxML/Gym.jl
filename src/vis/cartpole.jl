@@ -128,7 +128,7 @@ end
 function render!(env::CartPoleEnv, ctx::RGBCtx)
     render!(env, ctx.cairo)
     ptr = ccall((:cairo_image_surface_get_data, Cairo._jl_libcairo), Ptr{UInt32}, (Ptr{Nothing},), ctx.cairo.viewer.ptr)
-    arr = unsafe_wrap(Array, ptr, (ctx.cairo.screen_width, screen_height))
+    arr = unsafe_wrap(Array, ptr, (ctx.cairo.screen_width, ctx.cairo.screen_height))
     rgb_arr = convert.(Float64, channelview(colorview(RGB{N0f8}, permutedims(reinterpret(RGB24, arr), [2, 1]))))
     return rgb_arr
 end
