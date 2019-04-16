@@ -51,7 +51,7 @@ function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
             viewer
         )
     else
-        error("Unrecognized mode in Ctx(): ${mode}")
+        error("Unrecognized mode in Ctx(): $(mode)")
     end
 end
 
