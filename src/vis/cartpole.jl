@@ -97,5 +97,5 @@ function render(env::CartPoleEnv, ctx::CairoCtx)
     circle(viewer, 0, 0, 5)
     fill(viewer)
 
-    env.viewer
+    ctx.viewer
 end
