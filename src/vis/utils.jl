@@ -1,4 +1,4 @@
-using WebIO, JSExpr, Cairo
+using WebIO, JSExpr, Cairo, Colors, Images
 
 abstract type AbstractCtx end
 
@@ -18,6 +18,10 @@ struct CairoCtx <: AbstractCtx
     cart_width::Float32
     cart_height::Float32
     viewer::Cairo.CairoSurfaceBase{UInt32}
+end
+
+struct RGBCtx <: AbstractCtx
+    cairo::CairoCtx
 end
 
 # `play(env, actions)`

@@ -50,6 +50,31 @@ function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
             cart_height,
             viewer
         )
+    elseif mode == :rgb
+        screen_height = 400
+        screen_width = 600
+        world_width = 48f-1
+        scale = screen_width/world_width
+        carty = 100 # TOP OF CART
+        pole_width = 10f0
+        pole_length = scale
+        cart_width = 50f0
+        cart_height = 30f0
+        viewer = CairoRGBSurface(screen_width, screen_height)
+        cario = CairoCtx(
+            screen_height,
+            screen_width,
+            world_width,
+            scale,
+            carty,
+            pole_width,
+            pole_length,
+            cart_width,
+            cart_height,
+            viewer
+        )
+
+        RGBCtx(cario)
     else
         error("Unrecognized mode in Ctx(): $(mode)")
     end
@@ -59,7 +84,7 @@ function render(env::CartPoleEnv, ctx::WebIOCtx)
     ctx.o[] = obs(env, Flux.data(env.state))
 end
 
-function render(env::CartPoleEnv, ctx::CairoCtx)
+function render!(env::CartPoleEnv, ctx::CairoCtx)
     viewer = CairoContext(ctx.viewer)
     # Background
     set_source_rgb(viewer, 1, 1, 1)
@@ -98,4 +123,12 @@ function render(env::CartPoleEnv, ctx::CairoCtx)
     fill(viewer)
 
     ctx.viewer
+end
+
+function render!(env::CartPoleEnv, ctx::RGBCtx)
+    render!(env, ctx.cairo)
+    ptr = ccall((:cairo_image_surface_get_data, Cairo._jl_libcairo), Ptr{UInt32}, (Ptr{Nothing},), ctx.cairo.viewer.ptr)
+    arr = unsafe_wrap(Array, ptr, (ctx.cairo.screen_width, screen_height))
+    rgb_arr = convert.(Float64, channelview(colorview(RGB{N0f8}, permutedims(reinterpret(RGB24, arr), [2, 1]))))
+    return rgb_arr
 end
