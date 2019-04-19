@@ -39,7 +39,7 @@ end
 function Box(low::Array, high::Array, dtype::Union{DataType, Nothing}=nothing)
     @assert size(low) == size(high) "Dimension mismatch between low and high arrays."
     shape = size(low)
-    @assert all(low .<= high) "elements of low must be lesser than their respective counterparts in high"
+    @assert all(low .< high) "elements of low must be lesser than their respective counterparts in high"
 
     if isnothing(dtype)
         dtype = all(high .== 255) ? UInt8 : Float32
