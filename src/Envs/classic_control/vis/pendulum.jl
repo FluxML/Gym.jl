@@ -1,3 +1,4 @@
+using WebIO, JSExpr
 obs(env::PendulumEnv, ::Nothing) = obs(env, [0.0, 0.0])
 obs(env::PendulumEnv, (θ, θ̄)) = Flux.data(θ)
 
@@ -20,6 +21,6 @@ function Ctx(env::PendulumEnv)
     Ctx(s, o)
 end
 
-function render(env::PendulumEnv, ctx::Ctx)
+function render(env::PendulumEnv, ctx::Gym.Ctx)
     ctx.o[] = obs(env, env.state)
 end

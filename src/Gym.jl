@@ -2,22 +2,17 @@ module Gym
 
 using Flux
 using Flux.Tracker
-
-import Base.show
-
-export step!, reset!, Ctx, render
+using Reexport
 
 #Spaces
 include("Spaces/Space.jl")
-using .Space
-export sample,
-    Box, Discrete, TupleSpace, DictSpace, MultiBinary, MultiDiscrete
-#Environments
-export CartPoleEnv, PendulumEnv, Continuous_MountainCarEnv
+@reexport using .Space
 
-include("vis/utils.jl")
-include("CartPole.jl")
-include("Pendulum.jl")
-include("Continuous-MountainCar.jl")
+# Renderer
+include("Envs/vis/utils.jl")
+export Ctx
 
+include("Envs/registry.jl")
+export make, register,        # Registry functions
+       reset!, step!, render  # Environment interaction functions
 end #module

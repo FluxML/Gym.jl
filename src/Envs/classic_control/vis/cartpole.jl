@@ -1,10 +1,12 @@
+using WebIO, JSExpr
+
 obs(env::CartPoleEnv, ::Nothing) = obs(env, zeros(4))
 obs(env::CartPoleEnv, (x, x̄, θ, θ̄)) =
     Dict("x" => x, "theta"=>θ)
 
 function Ctx(env::CartPoleEnv)
     path = (p) -> normpath("$(@__DIR__)/$p")
-    s = Scope(imports=path.(["../../assets/cartpole/js/Board.js", "../../assets/cartpole/css/cartpole.css"]))
+    s = Scope(imports=path.(["assets/cartpole/js/Board.js", "assets/cartpole/css/cartpole.css"]))
     config = Dict(
         "cart_height"=> env.length/60,
         "cart_length"=> 2*env.length,
@@ -27,6 +29,6 @@ function Ctx(env::CartPoleEnv)
     Ctx(s, o)
 end
 
-function render(env::CartPoleEnv, ctx::Ctx)
+function render(env::CartPoleEnv, ctx::Gym.Ctx)
     ctx.o[] = obs(env, Flux.data(env.state))
 end
