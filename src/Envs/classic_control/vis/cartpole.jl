@@ -1,3 +1,5 @@
+using WebIO, JSExpr, Cairo, Colors, Images
+
 obs(env::CartPoleEnv, ::Nothing) = obs(env, zeros(4))
 obs(env::CartPoleEnv, (x, x̄, θ, θ̄)) =
     Dict("x" => x, "theta"=>θ)

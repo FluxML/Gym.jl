@@ -1,4 +1,4 @@
-using WebIO, JSExpr, Cairo, Colors, Images
+using WebIO, Cairo
 
 abstract type AbstractCtx end
 
@@ -31,6 +31,7 @@ end
 # w = Blink()
 # play(env, actions, (ctx)=> body!(w, ctx.s))
 # `
+#=
 function play(env, actions=rand(1:2, 1000), cb=nothing)
     reset!(env)
     ctx = Ctx(env)
@@ -49,5 +50,5 @@ function play(env, actions=rand(1:2, 1000), cb=nothing)
         i += 1
         sleep(0.08) # to see an animation
     end
-
 end
+=#

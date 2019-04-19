@@ -8,7 +8,7 @@ using Printf
 #using CuArrays
 
 # Load game environment
-env = CartPoleEnv()
+env = make("CartPole")
 reset!(env)
 
 # ----------------------------- Parameters -------------------------------------

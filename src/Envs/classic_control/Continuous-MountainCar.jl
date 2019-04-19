@@ -1,4 +1,4 @@
-mutable struct Continuous_MountainCarEnv
+mutable struct Continuous_MountainCarEnv <: AbstractEnv
     min_action::Float32
     max_action::Float32
     min_position::Float32
@@ -55,4 +55,4 @@ function reset!(env::Continuous_MountainCarEnv)
     env.state = param([2f-1rand(Float32) - 6f-1, 0f0])
 end
 
-show(io::IO, env::Continuous_MountainCarEnv) = print(io, "Continuous-MountainCarEnv")
+Base.show(io::IO, env::Continuous_MountainCarEnv) = print(io, "Continuous-MountainCarEnv")

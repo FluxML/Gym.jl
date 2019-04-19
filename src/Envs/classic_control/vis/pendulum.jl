@@ -1,3 +1,5 @@
+using WebIO, JSExpr
+
 obs(env::PendulumEnv, ::Nothing) = obs(env, [0.0, 0.0])
 obs(env::PendulumEnv, (θ, θ̄)) = Flux.data(θ)
 
