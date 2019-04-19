@@ -25,7 +25,7 @@ function PendulumEnv()
 end
 
 function step!(env::PendulumEnv, u)
-    @assert u ∈ env.action_space "Invalid action ($(u)) issued"
+    # @assert u ∈ env.action_space "Invalid action ($(u)) issued"
     θ, θ̇  = env.state[1:1], env.state[2:2]
     g, m, l, dt = 10f0, 1f0, 1f0, env.dt
 
@@ -44,7 +44,7 @@ end
 
 function reset!(env::PendulumEnv)
     high = Float32.([π, 1])
-    env.state = param(2rand(Float32, 2) .* high .- high)
+    env.state = 2rand(Float32, 2) .* high .- high
 
     if isdefined(Main, :CuArrays)
         env.state = env.state |> gpu

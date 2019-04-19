@@ -58,10 +58,10 @@ function CartPoleEnv()
 end
 
 function step!(env::CartPoleEnv, action)
-#    @assert action ∈ env.action_space "$action in ($(env.action_space)) invalid"
+    # @assert action ∈ env.action_space "$action in ($(env.action_space)) invalid"
     state = env.state
     x, ẋ, θ, θ̇  = state[1:1], state[2:2], state[3:3], state[4:4]
-    #force = action == 2 ? env.force_mag : -env.force_mag
+    # force = action == 2 ? env.force_mag : -env.force_mag
     force = action .* env.force_mag  # action is +1 or -1
     cosθ = cos.(θ)
     sinθ = sin.(θ)
@@ -93,7 +93,7 @@ function step!(env::CartPoleEnv, action)
         reward = 1f0
     else
         if env.steps_beyond_done == 0
-            @warn "You are calling 'step!()' even though this environment has already returned done = true. You should always call 'reset()' once you receive 'done = true' -- any further steps are undefined behavior."
+           # @warn "You are calling 'step!()' even though this environment has already returned done = true. You should always call 'reset()' once you receive 'done = true' -- any further steps are undefined behavior."
         end
         env.steps_beyond_done += 1
         reward = 0f0
@@ -103,7 +103,7 @@ function step!(env::CartPoleEnv, action)
 end
 
 function reset!(env::CartPoleEnv)
-    env.state = param(rand(Float32, 4) * 1f-1 .- 5f-2)
+    env.state = rand(Float32, 4) * 1f-1 .- 5f-2
 
     if isdefined(Main, :CuArrays)
         env.state = env.state |> gpu

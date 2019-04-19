@@ -1,4 +1,3 @@
-
 """A specification for a particular instance of the environment. Used
 to register the parameters for official evaluations.
 
@@ -16,7 +15,6 @@ Attributes:
     trials (int): The number of trials run in official evaluation
 """
 
-abstract type AbstractEnv end
 
 struct EnvSpec
     id::Symbol
@@ -26,7 +24,7 @@ struct EnvSpec
     reward_threshold::Union{Int, Nothing}
     nondeterministic::Bool
     tags::Dict{String, Any}
-    max_episode_step::Union{Int, Nothing}
+    max_episode_steps::Union{Int, Nothing}
     max_episode_seconds::Union{Int, Nothing}
     kwargs::Dict
 end
@@ -47,7 +45,7 @@ function _make(spec::EnvSpec; kwargs...)
     merge!(_kwargs, Dict(kwargs))
 
     env_var = load(spec.entry_point, spec.id)
-    Base.invokelatest(env_var)
+    Base.invokelatest(env_var), spec.reward_threshold, spec.max_episode_steps
 end
 
 function load(path, id)
@@ -101,4 +99,10 @@ Optional keyword arguments:
     nondeterministic ( Bool): Whether this environment is non-deterministic even after seeding
     tags (Dict{String, Any}): A set of arbitrary key-value tags on this environment, including simple property=True tags
 """
-make(id_string; kwargs...) = _make(registry, id_string; kwargs...)
+
+include("env_wrapper.jl")
+
+function make(id_string, train=true; kwargs...)
+	env, rt, max_ep_steps = _make(registry, id_string; kwargs...)
+	EnvWrapper(env, train; reward_threshold=rt, max_episode_steps=max_ep_steps)
+end

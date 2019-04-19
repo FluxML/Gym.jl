@@ -13,6 +13,8 @@ include("Envs/vis/utils.jl")
 export Ctx
 
 include("Envs/registry.jl")
-export make, register,        # Registry functions
-       reset!, step!, render  # Environment interaction functions
+export make, register,        	     		# Registry functions
+       EnvWrapper, reset!, step!, state, 
+       trainable, game_over, render, testmode!  # Environment interaction functions
+
 end #module
