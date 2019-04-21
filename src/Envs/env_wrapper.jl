@@ -40,6 +40,8 @@ end
 render(env::EnvWrapper, ctx::AbstractCtx) = render(env._env, ctx)
 render!(env::EnvWrapper, ctx::AbstractCtx) = render!(env._env, ctx)
 
+Ctx(env::EnvWrapper, mode::Symbol = :webio) = Ctx(env._env, mode)
+
 _get_obs(env::AbstractEnv) = env.state
 
 state(env::EnvWrapper) = _get_obs(env._env)
