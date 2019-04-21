@@ -83,7 +83,7 @@ function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
 end
 
 function render(env::CartPoleEnv, ctx::WebIOCtx)
-    ctx.o[] = obs(env, Flux.data(env.state))
+    ctx.o[] = obs(env, env.state)
 end
 
 function render!(env::CartPoleEnv, ctx::CairoCtx)
@@ -101,7 +101,7 @@ function render!(env::CartPoleEnv, ctx::CairoCtx)
     stroke(viewer)
 
     # Cart
-    cartx = env.state[1].data * ctx.scale + ctx.screen_width/2f0 # MIDDLE OF CART
+    cartx = env.state[1] * ctx.scale + ctx.screen_width/2f0 # MIDDLE OF CART
     translate(viewer, cartx, ctx.screen_height - ctx.carty - ctx.cart_height/2f0)
     set_source_rgb(viewer, 0, 0, 0)
     rectangle(viewer, 0, 0, ctx.cart_width, ctx.cart_height)
@@ -109,7 +109,7 @@ function render!(env::CartPoleEnv, ctx::CairoCtx)
 
     # Pole
     translate(viewer, ctx.cart_width/2, ctx.cart_height/2)
-    rotate(viewer, env.state[3].data)
+    rotate(viewer, env.state[3])
     set_source_rgb(viewer, 8f-1, 6f-1, 4f-1)
     move_to(viewer, 0, 0)
     line_to(viewer, ctx.pole_width/2, 0)

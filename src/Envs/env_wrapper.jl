@@ -37,6 +37,9 @@ function reset!(env::EnvWrapper)
     reset!(env._env)
 end
 
+render(env::EnvWrapper, ctx::AbstractCtx) = render(env._env, ctx)
+render!(env::EnvWrapper, ctx::AbstractCtx) = render!(env._env, ctx)
+
 _get_obs(env::AbstractEnv) = env.state
 
 state(env::EnvWrapper) = _get_obs(env._env)
