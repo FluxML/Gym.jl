@@ -28,14 +28,19 @@ function Box(low::Number, high::Number, shape::Union{Tuple, Array{Int64, 1}}, dt
         low = floor(dtype, low)
         high = floor(dtype, high)
     end
+
+    low > high && ((low, high) = (high, low))  # Preserves sanity if low > high
+
     Low = dtype(low) .+ zeros(dtype, shape)
     High = dtype(high) .+ zeros(dtype, shape)
     return Box(Low, High, shape, dtype)
 end
 
 function Box(low::Array, high::Array, dtype::Union{DataType, Nothing}=nothing)
-    @assert size(low) == size(high)
+    @assert size(low) == size(high) "Dimension mismatch between low and high arrays."
     shape = size(low)
+    @assert all(low .< high) "elements of low must be lesser than their respective counterparts in high"
+
     if isnothing(dtype)
         dtype = all(high .== 255) ? UInt8 : Float32
         @warn "dtype was autodetected as $(dtype). Please provide explicit data type."
