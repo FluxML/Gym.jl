@@ -39,7 +39,8 @@ function step!(env::PendulumEnv, u)
     θ̇_     = clamp.(tempθ̇_, -env.max_speed, env.max_speed)
 
     env.state = vcat(θ_, θ̇_)
-    return _get_obs(env), -costs, false, Dict()
+    r = -sum(costs)
+    return _get_obs(env), r, false, Dict()
 end
 
 function reset!(env::PendulumEnv)
