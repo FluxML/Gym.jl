@@ -28,7 +28,7 @@ function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
         end)
 
         WebIOCtx(s, o)
-    elseif mode == :human
+    elseif mode == :human_pane
         screen_height = 400
         screen_width = 600
         world_width = 48f-1
@@ -52,6 +52,40 @@ function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
             cart_height,
             viewer
         )
+    elseif mode == :human_window
+        screen_height = 400
+        screen_width = 600
+        world_width = 48f-1
+        scale = screen_width/world_width
+        carty = 100 # TOP OF CART
+        pole_width = 10f0
+        pole_length = scale
+        cart_width = 50f0
+        cart_height = 30f0
+        viewer = CairoRGBSurface(screen_width, screen_height)
+        cairo = CairoCtx(
+            screen_height,
+            screen_width,
+            world_width,
+            scale,
+            carty,
+            pole_width,
+            pole_length,
+            cart_width,
+            cart_height,
+            viewer
+        )
+
+        canvas = GtkCanvas()
+        canvas.backcc = CairoContext(cairo.viewer)
+        win = GtkWindow(canvas, name, screen_width, screen_height; resizable=false)
+        show(canvas)
+        visible(win, false)
+        signal_connect(win, "delete-event") do widget, event
+            ccall((:gtk_widget_hide_on_delete, Gtk.libgtk), Bool, (Ptr{GObject},), win)
+        end
+
+        GtkViewer(cairo, canvas, win)
     elseif mode == :rgb
         screen_height = 400
         screen_width = 600
@@ -135,4 +169,11 @@ function render!(env::CartPoleEnv, ctx::RGBCtx)
     arr = unsafe_wrap(Array, ptr, (ctx.cairo.screen_width, ctx.cairo.screen_height))
     rgb_arr = convert.(Float64, channelview(colorview(RGB{N0f8}, permutedims(reinterpret(RGB24, arr), [2, 1]))))
     return rgb_arr
+end
+
+function render!(env::CartPoleEnv, ctx::GtkCtx)
+    !visible(ctx.win) && visible(ctx.win, true)
+    draw(ctx.canvas) do widget
+        render!(env, ctx.cairo))
+    end
 end

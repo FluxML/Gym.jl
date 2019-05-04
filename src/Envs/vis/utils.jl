@@ -1,4 +1,4 @@
-using WebIO, Cairo
+using WebIO, Cairo, Gtk
 
 abstract type AbstractCtx end
 
@@ -22,6 +22,12 @@ end
 
 struct RGBCtx <: AbstractCtx
     cairo::CairoCtx
+end
+
+struct GtkCtx <: AbstractCtx
+    cairo::CairoCtx
+    canvas::GtkCanvas
+    win::GtkWindowLeaf
 end
 
 # `play(env, actions)`
