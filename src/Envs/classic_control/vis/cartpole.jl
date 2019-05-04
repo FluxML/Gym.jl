@@ -144,7 +144,7 @@ function render!(env::CartPoleEnv, ctx::CairoCtx)
     # Pole
     translation_dist = Pair(cartx + ctx.cart_width/2f0, ctx.screen_height - ctx.carty - ctx.cart_height/8f0)
     # Translating from origin to perform rotation; first = x, second = y
-    translate(ctx, translation_dist.first, translation_dist.second)
+    translate(viewer, translation_dist.first, translation_dist.second)
     # translate(viewer, ctx.cart_width/2, ctx.cart_height/2)
     rotate(viewer, env.state[3])
     set_source_rgb(viewer, 8f-1, 6f-1, 4f-1)
@@ -157,8 +157,8 @@ function render!(env::CartPoleEnv, ctx::CairoCtx)
     fill(viewer)
 
     # Undoing translations and rotations
-    rotate(ctx, -env.state[3])
-    translate(ctx, -translation_dist.first, -translation_dist.second)
+    rotate(viewer, -env.state[3])
+    translate(viewer, -translation_dist.first, -translation_dist.second)
 
     ctx.viewer
 end
