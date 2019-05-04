@@ -174,6 +174,6 @@ end
 function render!(env::CartPoleEnv, ctx::GtkCtx)
     !visible(ctx.win) && visible(ctx.win, true)
     draw(ctx.canvas) do widget
-        render!(env, ctx.cairo))
+        render!(env, ctx.cairo)
     end
 end
