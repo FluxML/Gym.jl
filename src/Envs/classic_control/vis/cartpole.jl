@@ -142,7 +142,7 @@ function render!(env::CartPoleEnv, ctx::CairoCtx)
     fill(viewer)
 
     # Pole
-    translation_dist = Pair(cartx + cartwidth/2f0, ctx.screen_height - ctx.carty - ctx.cartheight/8f0)
+    translation_dist = Pair(cartx + ctx.cart_width/2f0, ctx.screen_height - ctx.carty - ctx.cart_height/8f0)
     # Translating from origin to perform rotation; first = x, second = y
     translate(ctx, translation_dist.first, translation_dist.second)
     # translate(viewer, ctx.cart_width/2, ctx.cart_height/2)
