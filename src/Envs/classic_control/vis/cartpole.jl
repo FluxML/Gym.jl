@@ -102,27 +102,29 @@ function render!(env::CartPoleEnv, ctx::CairoCtx)
 
     # Cart
     cartx = env.state[1] * ctx.scale + ctx.screen_width/2f0 # MIDDLE OF CART
-    translate(viewer, cartx, ctx.screen_height - ctx.carty - ctx.cart_height/2f0)
+    # translate(viewer, cartx, ctx.screen_height - ctx.carty - ctx.cart_height/2f0)
     set_source_rgb(viewer, 0, 0, 0)
     rectangle(viewer, 0, 0, ctx.cart_width, ctx.cart_height)
     fill(viewer)
 
     # Pole
-    translate(viewer, ctx.cart_width/2, ctx.cart_height/2)
+    translation_dist = Pair(cartx + cartwidth/2f0, ctx.screen_height - ctx.carty - ctx.cartheight/8f0)
+    # Translating from origin to perform rotation; first = x, second = y
+    translate(ctx, translation_dist.first, translation_dist.second)
+    # translate(viewer, ctx.cart_width/2, ctx.cart_height/2)
     rotate(viewer, env.state[3])
     set_source_rgb(viewer, 8f-1, 6f-1, 4f-1)
-    move_to(viewer, 0, 0)
-    line_to(viewer, ctx.pole_width/2, 0)
-    line_to(viewer, ctx.pole_width/2, -ctx.pole_length)
-    line_to(viewer, -ctx.pole_width/2, -ctx.pole_length)
-    line_to(viewer, -ctx.pole_width/2, 0)
-    close_path(viewer)
+    rectangle(viewer, -ctx.pole_width/2, 0, ctx.pole_width, -ctx.pole_length)
     fill(viewer)
 
     #Axle
     set_source_rgb(viewer, 5f-1, 5f-1, 8f-1)
     circle(viewer, 0, 0, 5)
     fill(viewer)
+
+    # Undoing translations and rotations
+    rotate(ctx, -env.state[3])
+    translate(ctx, -translation_dist.first, -translation_dist.second)
 
     ctx.viewer
 end
