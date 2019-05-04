@@ -85,7 +85,7 @@ function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
             ccall((:gtk_widget_hide_on_delete, Gtk.libgtk), Bool, (Ptr{GObject},), win)
         end
 
-        GtkViewer(cairo, canvas, win)
+        GtkCtx(cairo, canvas, win)
     elseif mode == :rgb
         screen_height = 400
         screen_width = 600
