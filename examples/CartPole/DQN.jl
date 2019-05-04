@@ -8,13 +8,14 @@ using Printf
 #using CuArrays
 
 # Load game environment
-env = make("CartPole")
+env = make("CartPole-v0")
+ctx = Ctx(env, :human_window)
 reset!(env)
 
 # ----------------------------- Parameters -------------------------------------
 
-STATE_SIZE = length(env.state)    # 4
-ACTION_SIZE = length(env.action_space) # 2
+STATE_SIZE = length(env._env.state)    # 4
+ACTION_SIZE = length(env._env.action_space) # 2
 MEM_SIZE = 100_000
 BATCH_SIZE = 64
 γ = 1f0   			  # discount rate
@@ -82,16 +83,17 @@ function replay()
   ϵ *= ϵ > ϵ_MIN ? ϵ_DECAY : 1.0f0
 end
 
-function episode!(env, train=true)
+function episode!(env, train=true, draw=false)
   done = false
   total_reward = 0f0
   while !done
-    #render(env)
-    s = env.state
+    draw && render!(env, ctx)
+    s = env._env.state
     a = action(s, train)
     s′, r, done, _ = step!(env, a)
     total_reward += r
     train && remember(s, inv_action(a), r, s′, done)
+    draw && sleep(0.01)
   end
 
   total_reward
@@ -126,7 +128,7 @@ ee = 1
 while true
   global ee
   reset!(env)
-  total_reward = episode!(env, false)
+  total_reward = episode!(env, false, true)
   println("Episode: $ee | Score: $total_reward")
   ee += 1
 end

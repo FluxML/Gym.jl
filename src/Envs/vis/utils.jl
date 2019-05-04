@@ -1,5 +1,7 @@
 using WebIO, Cairo, Gtk
 
+abstract type AbstractDrawParams end
+
 abstract type AbstractCtx end
 
 struct WebIOCtx <: AbstractCtx
@@ -8,24 +10,14 @@ struct WebIOCtx <: AbstractCtx
 end
 
 struct CairoCtx <: AbstractCtx
-    screen_height::UInt32
-    screen_width::UInt32
-    world_width::Float32
-    scale::Float32
-    carty::UInt32
-    pole_width::Float32
-    pole_length::Float32
-    cart_width::Float32
-    cart_height::Float32
+    params::AbstractDrawParams
     viewer::Cairo.CairoSurfaceBase{UInt32}
 end
 
-struct RGBCtx <: AbstractCtx
-    cairo::CairoCtx
-end
+const RGBCtx = CairoCtx
 
 struct GtkCtx <: AbstractCtx
-    cairo::CairoCtx
+    params::AbstractDrawParams
     canvas::GtkCanvas
     win::GtkWindowLeaf
 end
