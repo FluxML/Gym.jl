@@ -15,8 +15,8 @@ mutable struct EnvWrapper
     _env::AbstractEnv
 end
 
-EnvWrapper(env::AbstractEnv, train::Bool=true; 
-		   reward_threshold=nothing, max_episode_steps=nothing) = 
+EnvWrapper(env::AbstractEnv, train::Bool=true;
+		   reward_threshold=nothing, max_episode_steps=nothing) =
 EnvWrapper(false, 0, 0, train, reward_threshold, max_episode_steps, env)
 
 function step!(env::EnvWrapper, a)
@@ -37,9 +37,9 @@ function reset!(env::EnvWrapper)
     reset!(env._env)
 end
 
-_get_obs(env::AbstractEnv) = env.state
+getobs(env::AbstractEnv) = env.state
 
-state(env::EnvWrapper) = _get_obs(env._env)
+state(env::EnvWrapper) = getobs(env._env)
 
 function testmode!(env::EnvWrapper, val::Bool=true)
     env.train = !val
