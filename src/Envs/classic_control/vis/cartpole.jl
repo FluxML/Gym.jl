@@ -78,7 +78,7 @@ function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
 
         canvas = GtkCanvas()
         canvas.backcc = CairoContext(cairo.viewer)
-        win = GtkWindow(canvas, name, screen_width, screen_height; resizable=false)
+        win = GtkWindow(canvas, "CartPole", screen_width, screen_height; resizable=false)
         show(canvas)
         visible(win, false)
         signal_connect(win, "delete-event") do widget, event
