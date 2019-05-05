@@ -16,6 +16,19 @@ struct CartPoleDrawParams <: AbstractDrawParams
     cart_height::Float32
 end
 
+CartPoleDrawParams() =
+    CartPoleDrawParams(
+        400,       # screen_height
+        600,       # screen_width
+        48f-1,     # world_width
+        600/48f-1, # scale (screen_width / world_width)
+        100,       # carty
+        10f0,      # pole_width
+        600/48f-1, # pole_length (scale)
+        50f0,      # cart_width
+        30f0       # cart_height
+    )
+
 function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
     if mode == :webio
         path = (p) -> normpath("$(@__DIR__)/$p")
@@ -41,55 +54,18 @@ function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
 
         WebIOCtx(s, o)
     elseif mode == :human_pane
-        screen_height = 400
-        screen_width = 600
-        world_width = 48f-1
-        scale = screen_width/world_width
-        carty = 100 # TOP OF CART
-        pole_width = 10f0
-        pole_length = scale
-        cart_width = 50f0
-        cart_height = 30f0
-        draw_params = CartPoleDrawParams(
-            screen_height,
-            screen_width,
-            world_width,
-            scale,
-            carty,
-            pole_width,
-            pole_length,
-            cart_width,
-            cart_height
-        )
-        viewer = CairoRGBSurface(screen_width, screen_height)
+        draw_params = CartPoleDrawParams()
+        viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
 
         CairoCtx(draw_params, viewer)
     elseif mode == :human_window
-        screen_height = 400
-        screen_width = 600
-        world_width = 48f-1
-        scale = screen_width/world_width
-        carty = 100 # TOP OF CART
-        pole_width = 10f0
-        pole_length = scale
-        cart_width = 50f0
-        cart_height = 30f0
-        draw_params = CartPoleDrawParams(
-            screen_height,
-            screen_width,
-            world_width,
-            scale,
-            carty,
-            pole_width,
-            pole_length,
-            cart_width,
-            cart_height
-        )
-        viewer = CairoRGBSurface(screen_width, screen_height)
+        draw_params = CartPoleDrawParams()
+        viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
 
         canvas = @GtkCanvas()
         canvas.backcc = CairoContext(viewer)
-        win = GtkWindow(canvas, "CartPole", screen_width, screen_height; resizable=false)
+        win = GtkWindow(canvas, "CartPole",
+                draw_params.screen_width, draw_params.screen_height; resizable=false)
         show(canvas)
         visible(win, false)
         signal_connect(win, "delete-event") do widget, event
@@ -98,27 +74,8 @@ function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
 
         GtkCtx(draw_params, canvas, win)
     elseif mode == :rgb
-        screen_height = 400
-        screen_width = 600
-        world_width = 48f-1
-        scale = screen_width/world_width
-        carty = 100 # TOP OF CART
-        pole_width = 10f0
-        pole_length = scale
-        cart_width = 50f0
-        cart_height = 30f0
-        draw_params = CartPoleDrawParams(
-            screen_height,
-            screen_width,
-            world_width,
-            scale,
-            carty,
-            pole_width,
-            pole_length,
-            cart_width,
-            cart_height
-        )
-        viewer = CairoRGBSurface(screen_width, screen_height)
+        draw_params = CartPoleDrawParams()
+        viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
 
         RGBCtx(draw_params, viewer)
     else
@@ -141,19 +98,19 @@ function drawcanvas!(env::CartPoleEnv, viewer::CairoContext, params::CartPoleDra
 
     # Cart
     cartx = env.state[1] * params.scale + params.screen_width/2f0 # MIDDLE OF CART
-    translation_dist1 = Pair(cartx, params.screen_height - params.carty - params.cart_height/2f0)
-    translate(viewer, translation_dist1.first, translation_dist1.second) # first = x, second = y
+    translation_dist = Pair(cartx, params.screen_height - params.carty - params.cart_height/2f0)
+    translate(viewer, translation_dist.first, translation_dist.second) # first = x, second = y
     set_source_rgb(viewer, 0, 0, 0)
     rectangle(viewer, 0, 0, params.cart_width, params.cart_height)
     fill(viewer)
 
     # Undoing translation
-    translate(viewer, -translation_dist1.first, -translation_dist1.second)
+    translate(viewer, -translation_dist.first, -translation_dist.second)
 
     # Pole
-    translation_dist2 = Pair(cartx + params.cart_width/2f0, params.screen_height - params.carty - params.cart_height/8f0)
+    translation_dist = Pair(cartx + params.cart_width/2f0, params.screen_height - params.carty - params.cart_height/8f0)
     # Translating from origin to perform rotation; first = x, second = y
-    translate(viewer, translation_dist2.first, translation_dist2.second)
+    translate(viewer, translation_dist.first, translation_dist.second)
     # translate(viewer, params.cart_width/2, params.cart_height/2)
     rotate(viewer, env.state[3])
     set_source_rgb(viewer, 8f-1, 6f-1, 4f-1)
@@ -167,7 +124,7 @@ function drawcanvas!(env::CartPoleEnv, viewer::CairoContext, params::CartPoleDra
 
     # Undoing translations and rotations
     rotate(viewer, -env.state[3])
-    translate(viewer, -translation_dist2.first, -translation_dist2.second)
+    translate(viewer, -translation_dist.first, -translation_dist.second)
 end
 
 function render(env::CartPoleEnv, ctx::WebIOCtx)
