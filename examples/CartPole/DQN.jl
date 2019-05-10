@@ -9,7 +9,6 @@ using Printf
 
 # Load game environment
 env = make("CartPole-v0")
-ctx = Ctx(env, :human_window)
 reset!(env)
 
 # ----------------------------- Parameters -------------------------------------
@@ -87,7 +86,7 @@ function episode!(env, train=true, draw=false)
   done = false
   total_reward = 0f0
   while !done
-    draw && render!(env, ctx)
+    draw && render!(env)
     s = env._env.state
     a = action(s, train)
     s′, r, done, _ = step!(env, a)

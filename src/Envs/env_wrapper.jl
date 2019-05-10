@@ -15,11 +15,12 @@ mutable struct EnvWrapper
 	reward_threshold::RealOrNothing
 	max_episode_steps::IntOrNothing
     _env::AbstractEnv
+    _ctx::AbstractCtx
 end
 
-EnvWrapper(env::AbstractEnv, train::Bool=true;
+EnvWrapper(env::AbstractEnv, ctx::AbstractCtx, train::Bool=true;
 		   reward_threshold=nothing, max_episode_steps=nothing) =
-EnvWrapper(false, 0, 0, train, reward_threshold, max_episode_steps, env)
+EnvWrapper(false, 0, 0, train, reward_threshold, max_episode_steps, env, ctx)
 
 function step!(env::EnvWrapper, a)
     s′, r, done, dict = step!(env._env, a)
@@ -39,10 +40,10 @@ function reset!(env::EnvWrapper)
     reset!(env._env)
 end
 
-render(env::EnvWrapper, ctx::AbstractCtx) = render(env._env, ctx)
 render!(env::EnvWrapper, ctx::AbstractCtx) = render!(env._env, ctx)
+render!(env::EnvWrapper) = render!(env, env._ctx)
 
-Ctx(env::EnvWrapper, mode::Symbol = :webio) = Ctx(env._env, mode)
+Ctx(env::EnvWrapper, mode::Symbol = :human_window) = Ctx(env._env, mode)
 
 """
 Returns the observational state of the environment. The original state can
