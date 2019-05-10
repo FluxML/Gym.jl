@@ -15,8 +15,8 @@ mutable struct EnvWrapper
     _env::AbstractEnv
 end
 
-EnvWrapper(env::AbstractEnv, train::Bool=true; 
-		   reward_threshold=nothing, max_episode_steps=nothing) = 
+EnvWrapper(env::AbstractEnv, train::Bool=true;
+		   reward_threshold=nothing, max_episode_steps=nothing) =
 EnvWrapper(false, 0, 0, train, reward_threshold, max_episode_steps, env)
 
 function step!(env::EnvWrapper, a)
@@ -42,9 +42,20 @@ render!(env::EnvWrapper, ctx::AbstractCtx) = render!(env._env, ctx)
 
 Ctx(env::EnvWrapper, mode::Symbol = :webio) = Ctx(env._env, mode)
 
-_get_obs(env::AbstractEnv) = env.state
+"""
+Returns the observational state of the environment. The original state can
+be accessed by `\`env._env.state\``.
+"""
+function state(env::EnvWrapper)
+	try
+		return _get_obs(env._env)
+	catch y
+		if isa(y, UndefVarError) || isa(y, MethodError)
+			return env._env.state
+		end
+	end
+end
 
-state(env::EnvWrapper) = _get_obs(env._env)
 
 function testmode!(env::EnvWrapper, val::Bool=true)
     env.train = !val
