@@ -2,6 +2,8 @@ import Flux.testmode!
 
 abstract type AbstractEnv end
 
+include("vis/utils.jl")
+
 IntOrNothing  = Union{Int,  Nothing}
 RealOrNothing = Union{Real, Nothing}
 

@@ -1,5 +1,3 @@
-using WebIO, JSExpr, Cairo, Colors, Images
-
 obs(env::CartPoleEnv, ::Nothing) = obs(env, zeros(4))
 obs(env::CartPoleEnv, (x, x̄, θ, θ̄)) =
     Dict("x" => x, "theta"=>θ)
@@ -29,31 +27,8 @@ CartPoleDrawParams() =
         30f0       # cart_height
     )
 
-function Ctx(env::CartPoleEnv, mode::Symbol = :webio)
-    if mode == :webio
-        path = (p) -> normpath("$(@__DIR__)/$p")
-        s = Scope(imports=path.(["../../assets/cartpole/js/Board.js", "../../assets/cartpole/css/cartpole.css"]))
-        config = Dict(
-            "cart_height"=> env.length/60,
-            "cart_length"=> 2*env.length,
-            "pole_length"=> env.polemass_length,
-            "pole_diameter"=> env.polemass_length/5,
-            "x_threshold"=> env.x_threshold)
-
-        o = Observable(s, "obs", obs(env, Flux.data(env.state)))
-        onimport(s, @js () -> begin
-            window.pick = (e) -> document.querySelector(e)
-            window.container = window.pick(".wio-scope") || window.pick(".webio-scope")
-            window.board = @new Board(window.container, $(config))
-            board.render($o[])
-        end)
-
-        onjs(o, @js function (x)
-            board.render(x)
-        end)
-
-        WebIOCtx(s, o)
-    elseif mode == :human_pane
+function Ctx(env::CartPoleEnv, mode::Symbol = :human_window)
+    if mode == :human_pane
         draw_params = CartPoleDrawParams()
         viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
 
@@ -125,30 +100,4 @@ function drawcanvas!(env::CartPoleEnv, viewer::CairoContext, params::CartPoleDra
     # Undoing translations and rotations
     rotate(viewer, -env.state[3])
     translate(viewer, -translation_dist.first, -translation_dist.second)
-end
-
-function render(env::CartPoleEnv, ctx::WebIOCtx)
-    ctx.o[] = obs(env, env.state)
-end
-
-function render!(env::CartPoleEnv, ctx::CairoCtx)
-    drawcanvas!(env, CairoContext(ctx.viewer), ctx.params)
-    return ctx.viewer
-end
-
-function render!(env::CartPoleEnv, ctx::RGBCtx)
-    drawcanvas!(env, CairoContext(ctx.viewer), ctx.params)
-    ptr = ccall((:cairo_image_surface_get_data, Cairo._jl_libcairo), Ptr{UInt32}, (Ptr{Nothing},), ctx.viewer.ptr)
-    arr = unsafe_wrap(Array, ptr, (ctx.params.screen_width, ctx.params.screen_height))
-    rgb_arr = convert.(Float64, channelview(colorview(RGB{N0f8}, permutedims(reinterpret(RGB24, arr), [2, 1]))))
-    return rgb_arr
-end
-
-function render!(env::CartPoleEnv, ctx::GtkCtx)
-    !visible(ctx.win) && visible(ctx.win, true)
-    @guarded draw(ctx.canvas) do widget
-        drawcanvas!(env, getgc(ctx.canvas), ctx.params)
-    end
-    reveal(ctx.canvas, true)
-    return ctx.canvas
 end

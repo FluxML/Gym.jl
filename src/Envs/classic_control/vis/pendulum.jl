@@ -1,5 +1,3 @@
-using WebIO, JSExpr
-
 obs(env::PendulumEnv, ::Nothing) = obs(env, [0.0, 0.0])
 obs(env::PendulumEnv, (θ, θ̄)) = Flux.data(θ)
 
@@ -24,25 +22,8 @@ PendulumDrawParams() =
         5f-2       # axle_radius
     )
 
-function Ctx(env::PendulumEnv, mode::Symbol = :webio)
-    if mode == :webio
-        path = (p) -> normpath("$(@__DIR__)/$p")
-        s = Scope(imports=path.(["../../assets/utils.js", "../../assets/pendulum/pendulum.js", "../../assets/pendulum/pendulum.css"]))
-        o = Observable(s, "obs", obs(env, env.state))
-        onimport(s, @js () -> begin
-            window.pick = (e) -> document.querySelector(e)
-            window.container = window.pick(".wio-scope") || window.pick(".webio-scope")
-            window.p = __init__(container, $o[]);
-            p.draw();
-        end)
-
-        onjs(o, @js function (x)
-            p.set_theta(x)
-            p.draw()
-        end)
-
-        WebIOCtx(s, o)
-    elseif mode == :human_pane
+function Ctx(env::PendulumEnv, mode::Symbol = :human_window)
+    if mode == :human_pane
         draw_params = PendulumDrawParams()
         viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
 
@@ -109,30 +90,4 @@ function drawcanvas!(env::PendulumEnv, viewer::CairoContext, params::PendulumDra
 
     # Undo translation
     translate(viewer, -translate_dist.first, -translate_dist.second)
-end
-
-function render(env::PendulumEnv, ctx::WebIOCtx)
-    ctx.o[] = obs(env, env.state)
-end
-
-function render!(env::PendulumEnv, ctx::CairoCtx)
-    drawcanvas!(env, CairoContext(ctx.viewer), ctx.params)
-    return ctx.viewer
-end
-
-function render!(env::PendulumEnv, ctx::RGBCtx)
-    drawcanvas!(env, CairoContext(ctx.viewer), ctx.params)
-    ptr = ccall((:cairo_image_surface_get_data, Cairo._jl_libcairo), Ptr{UInt32}, (Ptr{Nothing},), ctx.viewer.ptr)
-    arr = unsafe_wrap(Array, ptr, (ctx.params.screen_width, ctx.params.screen_height))
-    rgb_arr = convert.(Float64, channelview(colorview(RGB{N0f8}, permutedims(reinterpret(RGB24, arr), [2, 1]))))
-    return rgb_arr
-end
-
-function render!(env::PendulumEnv, ctx::GtkCtx)
-    !visible(ctx.win) && visible(ctx.win, true)
-    @guarded draw(ctx.canvas) do widget
-        drawcanvas!(env, getgc(ctx.canvas), ctx.params)
-    end
-    reveal(ctx.canvas, true)
-    return ctx.canvas
 end
