@@ -1,42 +1,42 @@
-using WebIO
+using Cairo, Gtk
 
 abstract type AbstractCtx end
+abstract type AbstractDrawParams end
 
-struct Ctx <: AbstractCtx
-    s::Scope
-    o::Observable
+struct CairoCtx <: AbstractCtx
+    params::AbstractDrawParams
+    viewer::Cairo.CairoSurfaceBase{UInt32}
 end
 
-#function render(env::AbstractEnv, ctx::Ctx)
-#end
-
-
-
-# `play(env, actions)`
-# or
-# `
-# using Blink
-# w = Blink()
-# play(env, actions, (ctx)=> body!(w, ctx.s))
-# `
-#=
-function play(env, actions=rand(1:2, 1000), cb=nothing)
-    reset!(env)
-    ctx = Ctx(env)
-    if cb == nothing
-        display(ctx.s)
-    else
-        cb(ctx)
-    end
-
-    i = 1
-    done = false
-
-    while i <= length(actions) && !done
-        a, b, done, d = step!(env, actions[i])
-        render(env, ctx)
-        i += 1
-        sleep(0.08) # to see an animation
-    end
+struct RGBCtx <: AbstractCtx
+    params::AbstractDrawParams
+    viewer::Cairo.CairoSurfaceBase{UInt32}
 end
-=#
+
+struct GtkCtx <: AbstractCtx
+    params::AbstractDrawParams
+    canvas::GtkCanvas
+    win::GtkWindowLeaf
+end
+
+function render!(env::AbstractEnv, ctx::CairoCtx)
+    drawcanvas!(env, CairoContext(ctx.viewer), ctx.params)
+    return ctx.viewer
+end
+
+function render!(env::AbstractEnv, ctx::RGBCtx)
+    drawcanvas!(env, CairoContext(ctx.viewer), ctx.params)
+    ptr = ccall((:cairo_image_surface_get_data, Cairo._jl_libcairo), Ptr{UInt32}, (Ptr{Nothing},), ctx.viewer.ptr)
+    arr = unsafe_wrap(Array, ptr, (ctx.params.screen_width, ctx.params.screen_height))
+    rgb_arr = convert.(Float64, channelview(colorview(RGB{N0f8}, permutedims(reinterpret(RGB24, arr), [2, 1]))))
+    return rgb_arr
+end
+
+function render!(env::AbstractEnv, ctx::GtkCtx)
+    !visible(ctx.win) && visible(ctx.win, true)
+    @guarded draw(ctx.canvas) do widget
+        drawcanvas!(env, getgc(ctx.canvas), ctx.params)
+    end
+    reveal(ctx.canvas, true)
+    return ctx.canvas
+end
