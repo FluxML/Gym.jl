@@ -1,4 +1,4 @@
-using Cairo, Gtk
+using Cairo, Gtk, Images, Colors
 
 abstract type AbstractCtx end
 abstract type AbstractDrawParams end
