@@ -25,7 +25,7 @@ function Box(low::Number, high::Number, shape::Union{Tuple, Array{Int64, 1}}, dt
         @warn "dtype was autodetected as $(dtype). Please provide explicit data type."
     end
     if dtype <: Integer
-        low = floor(dtype, low)
+        low = ceil(dtype, low)
         high = floor(dtype, high)
     end
 
@@ -46,7 +46,7 @@ function Box(low::Array, high::Array, dtype::Union{DataType, Nothing}=nothing)
         @warn "dtype was autodetected as $(dtype). Please provide explicit data type."
     end
     if dtype <: Integer
-        low = floor.(dtype, low)
+        low = ceil.(dtype, low)
         high = floor.(dtype, high)
     else
         low = dtype.(low)
