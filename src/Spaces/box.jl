@@ -24,12 +24,16 @@ function Box(low::Number, high::Number, shape::Union{Tuple, Array{Int64, 1}}, dt
         dtype = high == 255 ? UInt8 : Float32
         @warn "dtype was autodetected as $(dtype). Please provide explicit data type."
     end
+
+    low > high && ((low, high) = (high, low))  # Preserves sanity if low > high
+
     if dtype <: Integer
+        if !isa(low, Integer) || !isa(high, Integer)
+            @warn "dtype is an Integer, but the values are floating points. Using ceiling of lower bound and floor of upper bound"
+        end
         low = ceil(dtype, low)
         high = floor(dtype, high)
     end
-
-    low > high && ((low, high) = (high, low))  # Preserves sanity if low > high
 
     Low = dtype(low) .+ zeros(dtype, shape)
     High = dtype(high) .+ zeros(dtype, shape)
@@ -46,6 +50,9 @@ function Box(low::Array, high::Array, dtype::Union{DataType, Nothing}=nothing)
         @warn "dtype was autodetected as $(dtype). Please provide explicit data type."
     end
     if dtype <: Integer
+        if !all(isa.(low, Integer)) || !all(isa(high, Integer))
+            @warn "dtype is an Integer, but the values are floating points. Using ceiling of lower bound and floor of upper bound"
+        end
         low = ceil.(dtype, low)
         high = floor.(dtype, high)
     else
