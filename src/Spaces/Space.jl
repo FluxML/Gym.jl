@@ -11,5 +11,5 @@ include("dict-space.jl")
 include("multi-binary.jl")
 include("multi-discrete.jl")
 
-Base.in(x, space_obj::AbstractSpace) = contains(space_obj, x)
+Base.in(x, space_obj::AbstractSpace) = contains(x, space_obj)
 end #module

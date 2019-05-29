@@ -35,6 +35,6 @@ MultiDiscrete(nvec::Array{Int, 1}) = MultiDiscrete(Tuple(nvec))
 
 sample(multidisc_obj::MultiDiscrete) = [multidisc_obj.dtype(rand(1:counts)) for counts in multidisc_obj.nvec]
 
-contains(multidisc_obj::MultiDiscrete, x) = all(0 .< x .<= multidisc_obj.nvec)
+contains(x, multidisc_obj::MultiDiscrete) = all(0 .< x .<= multidisc_obj.nvec)
 
 Base.:(==)(multidisc_obj::MultiDiscrete, other::MultiDiscrete) = multidisc_obj.nvec == other.nvec

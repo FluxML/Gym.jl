@@ -16,7 +16,7 @@ end
 
 sample(tuple_obj::TupleSpace) = Tuple(sample(space) for space in tuple_obj.spaces)
 
-function contains(tuple_obj::TupleSpace, x)
+function contains(x, tuple_obj::TupleSpace)
     if isa(x, Array)
         x = Tuple(Array)
     end

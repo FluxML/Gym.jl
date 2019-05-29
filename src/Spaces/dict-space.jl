@@ -16,7 +16,7 @@ DictSpace(spaces::Dict{<:Union{Symbol, AbstractString}, <:AbstractSpace})  =
 
 sample(dict_obj::DictSpace) = OrderedDict([(k, sample(space)) for (k, space) in pairs(dict_obj.spaces)])
 
-function contains(dict_obj::DictSpace, x)
+function contains(x, dict_obj::DictSpace)
     # If x is not a dict or OrderedDict or if x doesn't have the same length as spaces
     if !(isa(x, Dict) || isa(x, OrderedDict)) || Base.length(x) != Base.length(dict_obj.spaces)
         return false

@@ -72,7 +72,7 @@ function sample(box_obj::Box)
         rand.(UnitRange.(box_obj.low, box_obj.high))
 end
 
-function contains(box_obj::Box, x)
+function contains(x, box_obj::Box)
     isa(x, Number) && box_obj.shape == (1,) && (x = [x])
     size(x) == box_obj.shape && all(box_obj.low .<= x .<= box_obj.high)
 end
