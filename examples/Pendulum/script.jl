@@ -15,7 +15,7 @@ while i <= length(actions) && !done
     a, b, done, d = step!(env, actions[i])
     println("θ = $(env._env.state[1])")
 
-    render!(env, ctx)
+    render!(env)
     i += 1
     sleep(0.01) # to see an animation
 end
