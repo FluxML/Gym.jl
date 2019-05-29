@@ -1,15 +1,11 @@
 # TODO: seed, copy
 
 """
-A box in R^n.
-I.e., each coordinate is bounded.
-
-Example usage:
-box_obj.action_space = Box(-10, 10, (1,))
+A box in R^n, i.e., each coordinate is bounded.
 
 Two kinds of valid input:
-    Box(low=-1.0, high=1.0, shape=(3,4)) # low and high are scalars, and shape is provided
-    Box(low=[-1.0,-2.0], high=[2.0,4.0]) # low and high are arrays of the same shape
+    Box(-1.0, 1.0, (3,4)) # low and high are scalars, and shape is provided
+    Box([-1.0,-2.0], [2.0,4.0]) # low and high are arrays of the same shape
 """
 mutable struct Box <: AbstractSpace
     low::Array

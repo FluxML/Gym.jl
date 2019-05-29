@@ -20,7 +20,7 @@ e.g. Nintendo Game Controller
     or MultiDiscrete((5, 2, 3))
 
 """
-mutable struct MultiDiscrete# <: AbstractSpace
+mutable struct MultiDiscrete <: AbstractSpace
     nvec::NTuple{N, UInt32} where N
     dtype::DataType
     shape::Int
