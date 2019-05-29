@@ -3,6 +3,8 @@ Gym environments in Julia
 
 **`Gym.jl` is a work in progress and in active development. Expect breaking changes for some time.**
 
+**`Gym.jl` requires Julia v1.1**
+
 # Installation
 ```julia
 julia> ] add https://github.com/FluxML/Gym.jl
