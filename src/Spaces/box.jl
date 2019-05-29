@@ -73,4 +73,9 @@ function contains(x, box_obj::Box)
     size(x) == box_obj.shape && all(box_obj.low .<= x .<= box_obj.high)
 end
 
-Base.:(==)(box_obj::Box, other::Box) = isapprox(box_obj.low, other.low) && isapprox(box_obj.high, other.high)
+checkvalidtypes(box_obj1::Box, box_obj2::Box) =
+    (box_obj1.dtype <: Integer && box_obj2.dtype <: Integer) ?   # If both dtypes are Integers...
+        (box_obj1.dtype <: Unsigned && box_obj2.dtype <: Unsigned) || (box_obj1.dtype <: Signed && box_obj2.dtype <: Signed) :  # Check if they're both Signed or both Unsigned...
+        (box_obj1.dtype <: AbstractFloat && box_obj2.dtype <: AbstractFloat)  # Otherwise, check if they're both Floats.
+
+Base.:(==)(box_obj::Box, other::Box) = isapprox(box_obj.low, other.low) && isapprox(box_obj.high, other.high) && checkvalidtypes(box_obj, other)
