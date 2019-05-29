@@ -24,7 +24,7 @@ function contains(x, dict_obj::DictSpace)
 
     for (k, space) in pairs(dict_obj.spaces)
         # If k is not in x, or if x[k] ∉ space return false
-        (isnothing(get(x, k, nothing)) || !contains(space, x[k])) && return false
+        (isnothing(get(x, k, nothing)) || !(x[k] ∈ space)) && return false
     end
     return true
 end

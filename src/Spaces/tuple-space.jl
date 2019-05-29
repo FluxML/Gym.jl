@@ -21,7 +21,7 @@ function contains(x, tuple_obj::TupleSpace)
         x = Tuple(Array)
     end
     return isa(x, Tuple) && Base.length(x) == Base.length(tuple_obj.spaces) &&
-        all(contains(space, part) for (space, part) in zip(tuple_obj.spaces, x))
+        all(part ∈ space for (space, part) in zip(tuple_obj.spaces, x))
     end
 
 Base.length(tuple_obj::TupleSpace) = length(tuple_obj.spaces)
