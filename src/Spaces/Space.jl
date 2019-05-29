@@ -1,9 +1,6 @@
 module Space
 
-
-
-export sample, contains,
-    Box, Discrete, TupleSpace, DictSpace, MultiBinary, MultiDiscrete
+export sample
 
 abstract type AbstractSpace end
 

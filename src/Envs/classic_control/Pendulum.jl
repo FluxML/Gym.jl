@@ -1,3 +1,5 @@
+using .Space: Box
+
 mutable struct PendulumEnv <: AbstractEnv
     max_speed::Float32
     max_torque::Float32

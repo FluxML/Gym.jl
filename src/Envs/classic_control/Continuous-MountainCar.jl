@@ -1,3 +1,5 @@
+using .Space: Box
+
 mutable struct Continuous_MountainCarEnv <: AbstractEnv
     min_action::Float32
     max_action::Float32
