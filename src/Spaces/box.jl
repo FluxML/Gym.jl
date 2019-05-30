@@ -74,8 +74,8 @@ function contains(x, box_obj::Box)
 end
 
 checkvalidtypes(box_obj1::Box, box_obj2::Box) =
-    box_obj1.dtype == box_obj2.dtype ||
-        box_obj1.dtype <: Integer && box_obj2.dtype <: Integer &&
-            (box_obj1.dtype <: Unsigned && box_obj2.dtype <: Unsigned) || (box_obj1.dtype <: Signed && box_obj2.dtype <: Signed)
+    box_obj1.dtype == box_obj2.dtype ||                            # If the dtypes of both boxes are not the same...
+        box_obj1.dtype <: Integer && box_obj2.dtype <: Integer &&  # then check if they're both integers...
+            (box_obj1.dtype <: Unsigned && box_obj2.dtype <: Unsigned) || (box_obj1.dtype <: Signed && box_obj2.dtype <: Signed)  # And then check if they're both signed or both unsigned.
 
 Base.:(==)(box_obj::Box, other::Box) = isapprox(box_obj.low, other.low) && isapprox(box_obj.high, other.high) && checkvalidtypes(box_obj, other)
