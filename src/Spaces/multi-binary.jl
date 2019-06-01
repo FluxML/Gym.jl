@@ -5,7 +5,7 @@ mutable struct MultiBinary <: AbstractSpace
     n::Int
     shape::Tuple
 
-    MultiBinary(n::Int) = new(n, (multibin_obj.n, ))
+    MultiBinary(n::Int) = new(n, (n, ))
 end
 
 sample(multibin_obj::MultiBinary) = (multibin_obj.dtype)(rand(0:1, multibin_obj.n))
