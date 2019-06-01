@@ -8,7 +8,7 @@ discrete_obj.observation_space = Discrete(2)
 mutable struct Discrete <: AbstractSpace
     n::Int
     shape::Tuple
-    Discrete(N::Int) = new(N, (n, ))
+    Discrete(N::Int) = new(N, (N, ))
 end
 
 sample(discrete_obj::Discrete) = rand(1:discrete_obj.n)
