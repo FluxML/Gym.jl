@@ -4,9 +4,9 @@ using DataStructures: OrderedDict
 
 mutable struct DictSpace <: AbstractSpace
     spaces::OrderedDict{Union{Symbol, AbstractString}, AbstractSpace}
-
-    DictSpace(spaces::OrderedDict{<:Union{Symbol, AbstractString}, <:AbstractSpace}) =  new(spaces)
-    DictSpace(;space_kwargs...) = new(OrderedDict{Symbol, AbstractSpace}(space_kwargs))
+    shape::Tuple
+    DictSpace(spaces::OrderedDict{<:Union{Symbol, AbstractString}, <:AbstractSpace}) =  new(spaces, ())
+    DictSpace(;space_kwargs...) = new(OrderedDict{Symbol, AbstractSpace}(space_kwargs), ())
 end
 
 DictSpace(spaces::Dict{<:Union{Symbol, AbstractString}, <:AbstractSpace})  =

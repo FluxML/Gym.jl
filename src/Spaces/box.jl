@@ -10,6 +10,7 @@ Two kinds of valid input:
 mutable struct Box <: AbstractSpace
     low::Array
     high::Array
+    shape::Tuple
 end
 
 function Box(low::Number, high::Number, shape::Union{Tuple, Array{Int64, 1}}, dtype::Union{DataType, Nothing}=nothing)
@@ -33,7 +34,7 @@ function Box(low::Number, high::Number, shape::Union{Tuple, Array{Int64, 1}}, dt
 
     Low = dtype(low) .+ zeros(dtype, shape)
     High = dtype(high) .+ zeros(dtype, shape)
-    return Box(Low, High)
+    return Box(Low, High, shape)
 end
 
 function Box(low::Array, high::Array, dtype::Union{DataType, Nothing}=nothing)
@@ -55,15 +56,13 @@ function Box(low::Array, high::Array, dtype::Union{DataType, Nothing}=nothing)
         low = dtype.(low)
         high = dtype.(high)
     end
-    return Box(low, high)
+    return Box(low, high, shape)
 end
 #=
 function seed!(box_obj::Box, seed::Int)
     box_obj.seed = seed
 end
 =#
-
-size(box_obj::Box) = size(box_obj.low)
 
 Base.:(==)(box_obj::Box, other::Box) = checkvalidtypes(box_obj, other) && isapprox(box_obj.low, other.low) && isapprox(box_obj.high, other.high)
 
