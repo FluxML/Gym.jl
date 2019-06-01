@@ -4,6 +4,7 @@
 mutable struct MultiBinary <: AbstractSpace
     n::Int
     shape::Tuple
+
     MultiBinary(n::Int) = new(n, (multibin_obj.n, ))
 end
 
