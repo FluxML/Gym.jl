@@ -7,9 +7,7 @@ discrete_obj.observation_space = Discrete(2)
 """
 mutable struct Discrete <: AbstractSpace
     n::Int
-    dtype::DataType
-
-    Discrete(N::Int) = new(N, Int64)
+    Discrete(N::Int) = new(N)
 end
 
 sample(discrete_obj::Discrete) = rand(1:discrete_obj.n)
@@ -26,4 +24,4 @@ end
 
 Base.:(==)(discrete_obj::Discrete, other::Discrete) = discrete_obj.n == other.n
 
-Base.length(discrete_obj::Discrete) = discrete_obj.n
+Base.size(discrete_obj::Discrete) = (discrete_obj.n, )

@@ -10,9 +10,6 @@ Two kinds of valid input:
 mutable struct Box <: AbstractSpace
     low::Array
     high::Array
-    shape::Tuple
-    dtype::DataType
-    #seed::Int
 end
 
 function Box(low::Number, high::Number, shape::Union{Tuple, Array{Int64, 1}}, dtype::Union{DataType, Nothing}=nothing)
@@ -36,7 +33,7 @@ function Box(low::Number, high::Number, shape::Union{Tuple, Array{Int64, 1}}, dt
 
     Low = dtype(low) .+ zeros(dtype, shape)
     High = dtype(high) .+ zeros(dtype, shape)
-    return Box(Low, High, shape, dtype)
+    return Box(Low, High)
 end
 
 function Box(low::Array, high::Array, dtype::Union{DataType, Nothing}=nothing)
@@ -58,27 +55,32 @@ function Box(low::Array, high::Array, dtype::Union{DataType, Nothing}=nothing)
         low = dtype.(low)
         high = dtype.(high)
     end
-    return Box(low, high, shape, dtype)
+    return Box(low, high)
 end
 #=
 function seed!(box_obj::Box, seed::Int)
     box_obj.seed = seed
 end
 =#
+
+size(box_obj::Box) = size(box_obj.low)
+
+Base.:(==)(box_obj::Box, other::Box) = checkvalidtypes(box_obj, other) && isapprox(box_obj.low, other.low) && isapprox(box_obj.high, other.high)
+
 function sample(box_obj::Box)
-    box_obj.dtype <: AbstractFloat ?
-        rand(box_obj.dtype, box_obj.shape) .* (box_obj.high .- box_obj.low) .+ box_obj.low :
+    dtype = eltype(box_obj.low)
+    dtype <: AbstractFloat ?
+        rand(dtype, size(box_obj)) .* (box_obj.high .- box_obj.low) .+ box_obj.low :
         rand.(UnitRange.(box_obj.low, box_obj.high))
 end
 
 function contains(x, box_obj::Box)
-    isa(x, Number) && box_obj.shape == (1,) && (x = [x])
-    size(x) == box_obj.shape && all(box_obj.low .<= x .<= box_obj.high)
+    isa(x, Number) && size(box_obj.low) == (1,) && (x = [x])
+    size(x) == size(box_obj) && all(box_obj.low .<= x .<= box_obj.high)
 end
 
-checkvalidtypes(box_obj1::Box, box_obj2::Box) =
-    box_obj1.dtype == box_obj2.dtype ||                            # If the dtypes of both boxes are not the same...
-        box_obj1.dtype <: Integer && box_obj2.dtype <: Integer &&  # then check if they're both integers...
-            (box_obj1.dtype <: Unsigned && box_obj2.dtype <: Unsigned) || (box_obj1.dtype <: Signed && box_obj2.dtype <: Signed)  # And then check if they're both signed or both unsigned.
-
-Base.:(==)(box_obj::Box, other::Box) = isapprox(box_obj.low, other.low) && isapprox(box_obj.high, other.high) && checkvalidtypes(box_obj, other)
+function checkvalidtypes(box_obj1::Box, box_obj2::Box)
+    dtype1, dtype2 = eltype(box_obj1.low), eltype(box_obj2.low)
+    dtype1 == dtype2 ||                            # If the dtypes of both boxes are not the same...
+            (dtype1 <: Unsigned && dtype2 <: Unsigned) || (dtype1 <: Signed && dtype2 <: Signed)  # then check if they're both signed or both unsigned.
+end

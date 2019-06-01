@@ -22,13 +22,11 @@ e.g. Nintendo Game Controller
 """
 mutable struct MultiDiscrete <: AbstractSpace
     nvec::NTuple{N, UInt32} where N
-    dtype::DataType
-    shape::Int
 end
 
 function MultiDiscrete(nvec::NTuple{N, Int} where N) # nvec: vector of counts of each categorical variable
     @assert all(nvec .> 0) "nvec (counts) have to be positive"
-    MultiDiscrete(nvec, UInt32, length(nvec))
+    MultiDiscrete(nvec)
 end
 
 MultiDiscrete(nvec::Array{Int, 1}) = MultiDiscrete(Tuple(nvec))
@@ -38,3 +36,5 @@ sample(multidisc_obj::MultiDiscrete) = [multidisc_obj.dtype(rand(1:counts)) for 
 contains(x, multidisc_obj::MultiDiscrete) = all(0 .< x .<= multidisc_obj.nvec)
 
 Base.:(==)(multidisc_obj::MultiDiscrete, other::MultiDiscrete) = multidisc_obj.nvec == other.nvec
+
+Base.size(multidisc_obj::MultiDiscrete) = multidisc_obj.nvec
