@@ -7,7 +7,8 @@ discrete_obj.observation_space = Discrete(2)
 """
 mutable struct Discrete <: AbstractSpace
     n::Int
-    Discrete(N::Int) = new(N)
+    shape::Tuple
+    Discrete(N::Int) = new(N, (n, ))
 end
 
 sample(discrete_obj::Discrete) = rand(1:discrete_obj.n)
@@ -23,5 +24,3 @@ function contains(x::Union{Number, Array}, discrete_obj::Discrete)
 end
 
 Base.:(==)(discrete_obj::Discrete, other::Discrete) = discrete_obj.n == other.n
-
-Base.size(discrete_obj::Discrete) = (discrete_obj.n, )

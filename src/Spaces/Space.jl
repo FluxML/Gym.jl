@@ -13,4 +13,5 @@ include("multi-binary.jl")
 include("multi-discrete.jl")
 
 Base.in(x, space_obj::AbstractSpace) = contains(x, space_obj)
+Base.size(space_obj::AbstractSpace) = space_obj.shape
 end #module
