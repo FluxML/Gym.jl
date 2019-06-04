@@ -20,21 +20,20 @@ e.g. Nintendo Game Controller
     or MultiDiscrete((5, 2, 3))
 
 """
-mutable struct MultiDiscrete# <: AbstractSpace
+mutable struct MultiDiscrete <: AbstractSpace
     nvec::NTuple{N, UInt32} where N
-    dtype::DataType
-    shape::Int
+    shape::Tuple
 end
 
 function MultiDiscrete(nvec::NTuple{N, Int} where N) # nvec: vector of counts of each categorical variable
     @assert all(nvec .> 0) "nvec (counts) have to be positive"
-    MultiDiscrete(nvec, UInt32, length(nvec))
+    MultiDiscrete(nvec, nvec)
 end
 
 MultiDiscrete(nvec::Array{Int, 1}) = MultiDiscrete(Tuple(nvec))
 
-sample(multidisc_obj::MultiDiscrete) = [multidisc_obj.dtype(rand(1:counts)) for counts in multidisc_obj.nvec]
+sample(multidisc_obj::MultiDiscrete) = [UInt32(rand(1:counts)) for counts in multidisc_obj.nvec]
 
-contains(multidisc_obj::MultiDiscrete, x) = all(0 .< x .<= multidisc_obj.nvec)
+contains(x, multidisc_obj::MultiDiscrete) = all(0 .< x .<= multidisc_obj.nvec)
 
 Base.:(==)(multidisc_obj::MultiDiscrete, other::MultiDiscrete) = multidisc_obj.nvec == other.nvec

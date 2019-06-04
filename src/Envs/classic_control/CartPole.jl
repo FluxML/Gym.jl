@@ -1,3 +1,5 @@
+using .Space: Box, Discrete
+
 mutable struct CartPoleEnv <: AbstractEnv
     gravity::Float32
     masscart::Float32

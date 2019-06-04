@@ -21,7 +21,7 @@ end
 
 function render!(env::AbstractEnv, ctx::CairoCtx)
     drawcanvas!(env, CairoContext(ctx.viewer), ctx.params)
-    return ctx.viewer
+    display(ctx.viewer)
 end
 
 function render!(env::AbstractEnv, ctx::RGBCtx)
