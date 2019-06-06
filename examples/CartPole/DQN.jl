@@ -48,13 +48,10 @@ remember(state, action, reward, next_state, done) =
   push!(memory, (data(state), action, reward, data(next_state), done))
 
 function action(state, train=true)
-  train && rand() <= get_ϵ(e) && (return rand(-1:1))
+  train && rand() <= get_ϵ(e) && (return Gym.sample(env.action_space))
   act_values = model(state |> gpu)
-  a = Flux.onecold(act_values)
-  return a == 2 ? 1 : -1
+  return Flux.onecold(act_values)
 end
-
-inv_action(a) = a == 1 ? 2 : 1
 
 function replay()
   global ϵ
@@ -89,9 +86,10 @@ function episode!(env, train=true, draw=false)
     draw && render!(env)
     s = env._env.state
     a = action(s, train)
+    println("action = $a | inv_action = $(inv_action(a))")
     s′, r, done, _ = step!(env, a)
     total_reward += r
-    train && remember(s, inv_action(a), r, s′, done)
+    train && remember(s, a, r, s′, done)
     draw && sleep(0.01)
   end
 
