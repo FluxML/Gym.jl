@@ -24,3 +24,4 @@ function contains(x::Union{Number, Array}, discrete_obj::Discrete)
 end
 
 Base.:(==)(discrete_obj::Discrete, other::Discrete) = discrete_obj.n == other.n
+Base.length(discrete_obj::Discrete) = discrete_obj.n
