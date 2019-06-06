@@ -86,7 +86,6 @@ function episode!(env, train=true, draw=false)
     draw && render!(env)
     s = env._env.state
     a = action(s, train)
-    println("action = $a | inv_action = $(inv_action(a))")
     s′, r, done, _ = step!(env, a)
     total_reward += r
     train && remember(s, a, r, s′, done)
