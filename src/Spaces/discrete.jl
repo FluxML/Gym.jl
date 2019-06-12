@@ -13,8 +13,8 @@ end
 
 sample(discrete_obj::Discrete) = rand(1:discrete_obj.n)
 
-function contains(x::Union{Number, Array}, discrete_obj::Discrete)
-    as_int::Union{Number, Array, Nothing} = nothing
+function contains(x::Union{Number, AbstractArray}, discrete_obj::Discrete)
+    as_int = nothing
     try
         as_int = Int.(x)
     catch InexactError

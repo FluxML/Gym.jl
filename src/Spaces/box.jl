@@ -73,7 +73,7 @@ function sample(box_obj::Box)
         rand.(UnitRange.(box_obj.low, box_obj.high))
 end
 
-function contains(x, box_obj::Box)
+function contains(x::Union{Real, AbstractArray, NTuple}, box_obj::Box)
     isa(x, Number) && size(box_obj.low) == (1,) && (x = [x])
     size(x) == size(box_obj) && all(box_obj.low .<= x .<= box_obj.high)
 end
