@@ -60,11 +60,11 @@ function CartPoleEnv()
 end
 
 function step!(env::CartPoleEnv, action)
-    @assert action ∈ env.action_space "$action in ($(env.action_space)) invalid"
+    @assert action ∈ env.action_space "$action in $(env.action_space) invalid"
     state = env.state
     x, ẋ, θ, θ̇  = state[1:1], state[2:2], state[3:3], state[4:4]
     # Action is either 1 or 2. Force is either -force_mag or +force_mag
-    force = (2action-3) .* env.force_mag
+    force = (2action.-[3]) * env.force_mag
     cosθ = cos.(θ)
     sinθ = sin.(θ)
     temp = (force .+ env.polemass_length * θ̇  .^ 2 .* sinθ) / env.total_mass
