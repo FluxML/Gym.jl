@@ -3,11 +3,10 @@ module Gym
 using Flux
 using Flux.Tracker
 
-using Reexport
-
 #Spaces
 include("Spaces/Space.jl")
-@reexport using .Space
+using .Space
+export sample
 
 include("Envs/registry.jl")
 export make, register,        	     		# Registry functions
