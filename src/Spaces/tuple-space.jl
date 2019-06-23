@@ -17,7 +17,7 @@ sample(tuple_obj::TupleSpace) = Tuple(sample(space) for space in tuple_obj.space
 
 function contains(x, tuple_obj::TupleSpace)
     if isa(x, Array)
-        x = Tuple(Array)
+        x = Tuple(x)
     end
     return isa(x, Tuple) && Base.length(x) == Base.length(tuple_obj.spaces) &&
         all(part ∈ space for (space, part) in zip(tuple_obj.spaces, x))
