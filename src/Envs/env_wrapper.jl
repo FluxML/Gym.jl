@@ -1,4 +1,5 @@
 import Flux.testmode!
+using Zygote: @nograd
 
 abstract type AbstractEnv end
 
@@ -49,7 +50,7 @@ Ctx(env::EnvWrapper, mode::Symbol = :human_window) = Ctx(env._env, mode)
 Returns the observational state of the environment. The original state can
 be accessed by `\`env._env.state\``.
 """
-function state(env::EnvWrapper)
+@nograd function state(env::EnvWrapper)
 	try
 		return _get_obs(env._env)
 	catch y
