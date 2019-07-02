@@ -105,7 +105,7 @@ Optional keyword arguments:
 
 include("env_wrapper.jl")
 
-function make(id_string, mode=:human_window, train=true; kwargs...)
+function make(id_string, mode=:human_pane, train=true; kwargs...)
 	env, ctx, rt, max_ep_steps = _make(registry, id_string, mode; kwargs...)
 	EnvWrapper(env, ctx, train; reward_threshold=rt, max_episode_steps=max_ep_steps)
 end
