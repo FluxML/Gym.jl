@@ -22,7 +22,7 @@ PendulumDrawParams() =
         5f-2       # axle_radius
     )
 
-function Ctx(env::PendulumEnv, mode::Symbol = :human_window)
+Ctx(env::PendulumEnv, mode::Symbol = :human_window) = Ctx(env, Val(mode))
 
 function Ctx(::PendulumEnv, ::Val{:human_pane})
     draw_params = PendulumDrawParams()
