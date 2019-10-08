@@ -27,35 +27,37 @@ CartPoleDrawParams() =
         30f0       # cart_height
     )
 
-function Ctx(env::CartPoleEnv, mode::Symbol = :human_window)
-    if mode == :human_pane
-        draw_params = CartPoleDrawParams()
-        viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
+Ctx(env::CartPoleEnv, mode::Symbol = :human_window) = Ctx(env, Val(mode))
+    
+function Ctx(::CartPoleEnv, ::Val{:human_pane})
+    draw_params = CartPoleDrawParams()
+    viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
 
-        CairoCtx(draw_params, viewer)
-    elseif mode == :human_window
-        draw_params = CartPoleDrawParams()
-        viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
+    CairoCtx(draw_params, viewer)
+end
 
-        canvas = @GtkCanvas()
-        canvas.backcc = CairoContext(viewer)
-        win = GtkWindow(canvas, "CartPole",
-                draw_params.screen_width, draw_params.screen_height; resizable=false)
-        show(canvas)
-        visible(win, false)
-        signal_connect(win, "delete-event") do widget, event
-            ccall((:gtk_widget_hide_on_delete, Gtk.libgtk), Bool, (Ptr{GObject},), win)
-        end
+@init @require Gtk="4c0ca9eb-093a-5379-98c5-f87ac0bbbf44" function Ctx(::CartPoleEnv, ::Val{:human_window})
+    draw_params = CartPoleDrawParams()
+    viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
 
-        GtkCtx(draw_params, canvas, win)
-    elseif mode == :rgb
-        draw_params = CartPoleDrawParams()
-        viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
-
-        RGBCtx(draw_params, viewer)
-    else
-        error("Unrecognized mode in Ctx(): $(mode)")
+    canvas = @GtkCanvas()
+    canvas.backcc = CairoContext(viewer)
+    win = GtkWindow(canvas, "CartPole",
+            draw_params.screen_width, draw_params.screen_height; resizable=false)
+    show(canvas)
+    visible(win, false)
+    signal_connect(win, "delete-event") do widget, event
+        ccall((:gtk_widget_hide_on_delete, Gtk.libgtk), Bool, (Ptr{GObject},), win)
     end
+
+    GtkCtx(draw_params, canvas, win)
+end
+   
+function Ctx(::CartPoleEnv, ::Val{:rgb})
+    draw_params = CartPoleDrawParams()
+    viewer = CairoRGBSurface(draw_params.screen_width, draw_params.screen_height)
+
+    RGBCtx(draw_params, viewer)
 end
 
 function drawcanvas!(env::CartPoleEnv, viewer::CairoContext, params::CartPoleDrawParams)
