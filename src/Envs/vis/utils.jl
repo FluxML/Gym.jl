@@ -1,4 +1,4 @@
-using Cairo, Gtk, Images, Colors
+using Cairo, Images, Colors
 
 abstract type AbstractCtx end
 abstract type AbstractDrawParams end
@@ -11,12 +11,6 @@ end
 struct RGBCtx <: AbstractCtx
     params::AbstractDrawParams
     viewer::Cairo.CairoSurfaceBase{UInt32}
-end
-
-struct GtkCtx <: AbstractCtx
-    params::AbstractDrawParams
-    canvas::GtkCanvas
-    win::GtkWindowLeaf
 end
 
 function render!(env::AbstractEnv, ctx::CairoCtx)
@@ -32,11 +26,21 @@ function render!(env::AbstractEnv, ctx::RGBCtx)
     return rgb_arr
 end
 
-function render!(env::AbstractEnv, ctx::GtkCtx)
-    !visible(ctx.win) && visible(ctx.win, true)
-    @guarded draw(ctx.canvas) do widget
-        drawcanvas!(env, getgc(ctx.canvas), ctx.params)
-    end
-    reveal(ctx.canvas, true)
-    return ctx.canvas
+@init @require Gtk="4c0ca9eb-093a-5379-98c5-f87ac0bbbf44" begin
+	using Gtk
+
+	struct GtkCtx <: AbstractCtx
+		params::AbstractDrawParams
+		canvas::GtkCanvas
+		win::GtkWindowLeaf
+	end
+
+	function render!(env::AbstractEnv, ctx::GtkCtx)
+		!visible(ctx.win) && visible(ctx.win, true)
+		@guarded draw(ctx.canvas) do widget
+		    drawcanvas!(env, getgc(ctx.canvas), ctx.params)
+		end
+		reveal(ctx.canvas, true)
+		return ctx.canvas
+	end
 end
